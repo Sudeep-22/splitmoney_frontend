@@ -1,4 +1,3 @@
-import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -7,15 +6,23 @@ import Container from "@mui/material/Container";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import Button from "@mui/material/Button";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import type { RootState } from '../app/store';
+import AvatarWithOptions from "./AvatarWithOptions";
 
+interface setAlertProps {
+  setAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string) => void;
+}
 
-const Appbar = () => {
+const Appbar:React.FC<setAlertProps> = ({setAlert}) => {
   const Navigate = useNavigate();
   const Location = useLocation();
+  const { user, accessToken } = useSelector((state: RootState) => state.auth);
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl" disableGutters>
-        <Toolbar disableGutters sx={{display:"flex", justifyContent:"space-between", paddingLeft:4, paddingRight:4}}>
+        <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between", paddingLeft: 4, paddingRight: 4 }}>
           <Box alignItems="center">
             <Typography
               variant="h6"
@@ -30,14 +37,24 @@ const Appbar = () => {
                 textDecoration: "none",
               }}
             >
-            <PriceCheckIcon fontSize="medium"/>
+              <PriceCheckIcon fontSize="medium" />
               Split Money
             </Typography>
           </Box>
-          <Box>
-            <Button variant="contained" color="secondary" onClick={()=>{Location.pathname=="/login"?Navigate('/signUp'):Navigate('/login')}}>
-              {Location.pathname=="/login"?"Sign Up":"Log In"}
-            </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {!accessToken && Location.pathname === "/login" && (
+              <Button variant="contained" color="secondary" onClick={() => Navigate('/signUp')}>
+                Sign Up
+              </Button>
+            )}
+            {!accessToken && Location.pathname === "/signUp" && (
+              <Button variant="contained" color="secondary" onClick={() => Navigate('/login')}>
+                Log In
+              </Button>
+            )}
+            {accessToken && user && (
+              <AvatarWithOptions setAlert={setAlert}/>
+            )}
           </Box>
         </Toolbar>
       </Container>

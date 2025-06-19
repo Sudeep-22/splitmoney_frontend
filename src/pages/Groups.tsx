@@ -3,8 +3,11 @@ import CardItem from '../components/CardItem';
 import { Container, Box, Typography, Button, Grid } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 
+interface setAlertProps {
+  setAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string) => void;
+}
 
-const Groups = () => {
+const Groups:React.FC<setAlertProps> = ({setAlert}) => {
   const [groups, setGroups] = useState([{id:1,name:"Society",amount:100},{id:2,name:"Society2",amount:200}]);
   return (
     <Container maxWidth="lg">

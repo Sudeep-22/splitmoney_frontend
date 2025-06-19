@@ -2,21 +2,55 @@ import React, { useEffect, useState } from 'react';
 import { Container, Box, Paper, Typography, Button } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../app/store';
+import { loginThunk } from '../features/auth/authThunks';
+import { clearAuthState } from '../features/auth/authSlice';
 
-const Login = () =>{
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorPassword, setErrorPassword] = useState(false);
+interface setAlertProps {
+  setAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string) => void;
+}
 
-    const handleSubmit = (e:React.FormEvent<HTMLFormElement>) =>{
-        e.preventDefault();
-        if(!password){
-            setErrorPassword(true);
-        }else{
-            setErrorPassword(false);
-        }
-        console.log(username + "+" + password);
+const Login:React.FC<setAlertProps> = ({setAlert}) =>{
+  
+  const dispatch = useDispatch<AppDispatch>();
+  const auth = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorPassword, setErrorPassword] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorPassword(false);
+
+    if (!password) {
+      setErrorPassword(true);
+      return;
     }
+
+    dispatch(loginThunk({ name: username, password }));
+  };
+
+  useEffect(() => {
+    if (auth.accessToken) {
+      setAlert('success', 'Login Successful');
+      navigate('/');
+    }
+  }, [auth.accessToken]);
+
+  useEffect(() => {
+    if (auth.error) {
+      setAlert('error', auth.error);
+      setErrorPassword(true);
+
+      const timer = setTimeout(() => {
+        dispatch(clearAuthState());
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [auth.error]);
     
   return (
     <Container maxWidth="xs">
