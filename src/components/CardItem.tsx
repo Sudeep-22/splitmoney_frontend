@@ -3,10 +3,10 @@ import { Box, Paper, Typography, Grid } from '@mui/material';
 
 import { useNavigate } from 'react-router-dom';
 
-interface GroupData{
-  id:number;
-  name:string;
-  amount:number;
+interface GroupData {
+  _id: string;
+  title: string;
+  description: string;
 }
 
 interface CardItemProps {
@@ -17,7 +17,7 @@ const CardItem: React.FC<CardItemProps>= ({group}) => {
     const navigate = useNavigate();
     const handleClick = () =>{
         console.log("I have been clicked");
-        navigate(`/group/${group.id}`);
+        navigate(`/group/${group._id}`);
     }
   return (
         <Grid size={{xs:12,md:6}}>
@@ -26,14 +26,15 @@ const CardItem: React.FC<CardItemProps>= ({group}) => {
             elevation={3}
             p={4}
             mt={4}
-            sx={{ borderRadius: 2, backgroundColor: '#f9f9f9', display:'flex', flexWrap:'wrap', justifyContent:'space-between', alignItems:'center',
+            sx={{ borderRadius: 2, backgroundColor: '#f9f9f9', display:'flex', flexDirection: 'column',
+              alignItems: 'flex-start',
             cursor: 'pointer',
           '&:hover': {
             boxShadow: 6,
           },
             }}>
-                <Typography variant="h4" color="initial">{group.name}</Typography>
-                <Typography variant="inherit" color="textSecondary">You are owed {group.amount} rupees</Typography>
+                <Typography variant="h4" color="initial" gutterBottom>{group.title.slice(0,50)}</Typography>
+                <Typography variant="inherit" color="textSecondary">{group.description.slice(0,50)}</Typography>
         </Box>
         </Grid>
   )

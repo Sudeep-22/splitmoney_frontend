@@ -9,4 +9,5 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   message: string | null;
+  users: { _id: string; name: string }[];
 }

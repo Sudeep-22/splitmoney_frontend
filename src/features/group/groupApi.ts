@@ -1,10 +1,17 @@
+import { fetchWithAuth } from '../fetchWithAuth';
+
+export const fetchGroup = async () => {
+  const res = await fetchWithAuth('http://localhost:5000/api/group/fetchGroup', {
+    method: 'POST', // this should be POST as per your backend, not GET
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Failed to fetch group');
+  return json;
+};
+
 export const createGroup = async (data: { title: string; description: string }) => {
-  const res = await fetch('http://localhost:5000/api/group/create', {
+  const res = await fetchWithAuth('http://localhost:5000/api/group/createGroup', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': localStorage.getItem('token') || '',
-    },
     body: JSON.stringify(data),
   });
   const json = await res.json();
@@ -12,13 +19,9 @@ export const createGroup = async (data: { title: string; description: string }) 
   return json;
 };
 
-export const addMember = async (data: { name: string; title: string }) => {
-  const res = await fetch('http://localhost:5000/api/group/add-member', {
+export const addMember = async (data: { name: string; groupId: string }) => {
+  const res = await fetchWithAuth('http://localhost:5000/api/group/addMember', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': localStorage.getItem('token') || '',
-    },
     body: JSON.stringify(data),
   });
   const json = await res.json();
@@ -32,12 +35,8 @@ export const addExpense = async (data: {
   amount: number;
   paidByName: string;
 }) => {
-  const res = await fetch('http://localhost:5000/api/group/add-expense', {
+  const res = await fetchWithAuth('http://localhost:5000/api/group/addExpense', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': localStorage.getItem('token') || '',
-    },
     body: JSON.stringify(data),
   });
   const json = await res.json();
@@ -46,12 +45,8 @@ export const addExpense = async (data: {
 };
 
 export const exitGroup = async (data: { groupTitle: string }) => {
-  const res = await fetch('http://localhost:5000/api/group/exit', {
+  const res = await fetchWithAuth('http://localhost:5000/api/group/exitGroup', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-auth-token': localStorage.getItem('token') || '',
-    },
     body: JSON.stringify(data),
   });
   const json = await res.json();

@@ -1,11 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { AuthState } from './authTypes';
+import { saveToken } from './authUtils';
 import {
   loginThunk,
   logoutThunk,
   registerThunk,
   refreshAccessTokenThunk,
   deleteUserThunk,
+  fetchAllUsersThunk
 } from './authThunks';
 import { getToken, getStoredUser } from './authUtils';
 
@@ -15,6 +17,7 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   message: null,
+  users: [], 
 };
 
 const authSlice = createSlice({
@@ -62,6 +65,7 @@ const authSlice = createSlice({
       // Refresh
       .addCase(refreshAccessTokenThunk.fulfilled, (state, action) => {
         state.accessToken = action.payload.accessToken;
+        saveToken(action.payload.accessToken);
         state.user = action.payload.user;
       })
       .addCase(refreshAccessTokenThunk.rejected, (state, action) => {
@@ -85,7 +89,18 @@ const authSlice = createSlice({
       })
       .addCase(deleteUserThunk.rejected, (state, action) => {
         state.error = action.payload as string;
-      });
+      })
+//FetchAllUsers
+      .addCase(fetchAllUsersThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllUsersThunk.fulfilled, (state, action) => {
+    state.users = action.payload;
+  })
+  .addCase(fetchAllUsersThunk.rejected, (state, action) => {
+    state.error = action.payload as string;
+  });
   },
 });
 
