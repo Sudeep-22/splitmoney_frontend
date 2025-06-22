@@ -9,6 +9,16 @@ export const fetchGroup = async () => {
   return json;
 };
 
+export const fetchMembers = async (data: { groupId : string}) => {
+  const res = await fetchWithAuth('http://localhost:5000/api/group/fetchMembers', {
+    method: 'POST',
+    body: JSON.stringify(data), // this should be POST as per your backend, not GET
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Failed to fetch members');
+  return json;
+};
+
 export const createGroup = async (data: { title: string; description: string }) => {
   const res = await fetchWithAuth('http://localhost:5000/api/group/createGroup', {
     method: 'POST',
@@ -44,7 +54,7 @@ export const addExpense = async (data: {
   return json;
 };
 
-export const exitGroup = async (data: { groupTitle: string }) => {
+export const exitGroup = async (data: { groupId: string }) => {
   const res = await fetchWithAuth('http://localhost:5000/api/group/exitGroup', {
     method: 'POST',
     body: JSON.stringify(data),

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createGroup, addMember, addExpense, exitGroup, fetchGroup } from './groupApi';
+import { createGroup, addMember, addExpense, exitGroup, fetchGroup, fetchMembers } from './groupApi';
 
 interface Group {
   _id: string;
@@ -12,7 +12,8 @@ interface GroupState {
   loading: boolean;
   error: string | null;
   message: string | null;
-  groups: Group[]; // <-- Add this
+  groups: Group[];
+  members: string[]; 
 }
 
 
@@ -21,6 +22,7 @@ const initialState: GroupState = {
   error: null,
   message: null,
   groups: [],
+  members: [],
 };
 
 // Thunks
@@ -29,6 +31,19 @@ export const fetchGroupThunk = createAsyncThunk<Group[], void, { rejectValue: st
   async (_, thunkAPI) => {
     try {
       const res = await fetchGroup(); 
+      return res; 
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const fetchMembersThunk = createAsyncThunk<string[],                              // Return type
+  { groupId: string }, { rejectValue: string }>(
+  'group/fetchMembers',
+  async (payload: { groupId: string}, thunkAPI) => {
+    try {
+      const res = await fetchMembers(payload); 
       return res; 
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message);
@@ -74,7 +89,7 @@ export const addExpenseThunk = createAsyncThunk(
 
 export const exitGroupThunk = createAsyncThunk(
   'group/exit',
-  async (payload: { groupTitle: string }, thunkAPI) => {
+  async (payload: { groupId: string }, thunkAPI) => {
     try {
       const res = await exitGroup(payload);
       return res.message;
@@ -132,7 +147,20 @@ const groupSlice = createSlice({
     .addCase(fetchGroupThunk.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload as string;
-    });
+    })
+
+    .addCase(fetchMembersThunk.pending, (state) => {
+    state.loading = true;
+    state.error = null;
+  })
+  .addCase(fetchMembersThunk.fulfilled, (state, action) => {
+    state.loading = false;
+    state.members = action.payload;
+  })
+  .addCase(fetchMembersThunk.rejected, (state, action) => {
+    state.loading = false;
+    state.error = action.payload as string;
+  });
 }
 });
 

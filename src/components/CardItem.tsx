@@ -16,7 +16,6 @@ interface CardItemProps {
 const CardItem: React.FC<CardItemProps>= ({group}) => {
     const navigate = useNavigate();
     const handleClick = () =>{
-        console.log("I have been clicked");
         navigate(`/group/${group._id}`);
     }
   return (

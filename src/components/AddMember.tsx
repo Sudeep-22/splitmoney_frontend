@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Box, Paper, Typography, Grid, TextField, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent } from '@mui/material'
+import { Container, Box, Paper, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../app/store';
 import { clearMessage, addMemberThunk } from '../features/group/groupSlice';
@@ -8,11 +8,12 @@ import { fetchAllUsersThunk } from '../features/auth/authThunks';
 interface setAlertProps {
   setAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string) => void;
   handleClose: () => void;
-  groupId: string ;
+  groupId: string;
+  triggerRefresh: () => void;
 }
 
 
-const AddMember:React.FC<setAlertProps> = ({setAlert, handleClose, groupId}) => {
+const AddMember:React.FC<setAlertProps> = ({setAlert, handleClose, groupId, triggerRefresh}) => {
 const dispatch = useDispatch<AppDispatch>();
 const { users, error } = useSelector((state: RootState) => state.auth);
 const [selectedName, setSelectedName] = useState('');
@@ -32,6 +33,7 @@ const handleChange = (event: SelectChangeEvent) => {
       .then(() => {
         handleClose();
         setAlert('success', 'Member added successfully!');
+        triggerRefresh();
       })
       .catch((err) => {
         setAlert('error', err);
