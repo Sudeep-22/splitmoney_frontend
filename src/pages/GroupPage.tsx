@@ -7,6 +7,8 @@ import MemberList from "../components/MemberList";
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../app/store';
 import { clearMessage, addMemberThunk,exitGroupThunk } from '../features/group/groupSlice';
+import MemberSection from "../components/MemberSection";
+import ExpenseSection from "../components/ExpenseSection";
 
 interface setAlertProps {
   setAlert: (
@@ -18,14 +20,7 @@ interface setAlertProps {
 const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-  const [refresh, setRefresh] = useState(false);
-  const [open, setOpen] = React.useState(false);
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const handleOpen = () => {
-    setOpen(true);
-  };
+  
   const { id } = useParams();
 
   const handleExitClick = () => {
@@ -58,47 +53,12 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
           <Grid size={{xs:12,sm:3}} sx={{display:"flex", justifyContent:"space-around"}}>
               <Button variant="contained"> Settle up!</Button>
               <Button variant="contained" onClick={handleExitClick}> Exit Group</Button>
-          </Grid>
-          
+          </Grid> 
         </Grid>
-        
       </Box>
-      <Box>
-        <Box
-          component={Paper}
-          elevation={3}
-          p={4}
-          mt={4}
-          sx={{ borderRadius: 2, backgroundColor: "#f9f9f9", marginBottom: 4 }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: 2,
-            }}
-          >
-            <Typography variant="h4" color="initial">
-              Members
-            </Typography>
-            <Button variant="contained"  onClick={handleOpen} > Add Members</Button>
-            </Box>
-            <Backdrop
-            sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
-            open={open}
-            >
-        <AddMember 
-          setAlert={setAlert} 
-          handleClose={handleClose} 
-          groupId={id!} 
-          triggerRefresh={() => setRefresh(prev => !prev)} 
-        />
-      </Backdrop>
-          
-          <hr/>
-          <MemberList groupId={id!} refresh={refresh} />
-        </Box>
-            <Box
+        <MemberSection id={id!} setAlert={setAlert}/>
+        <ExpenseSection id={id!} setAlert={setAlert}/>
+            {/* <Box
         component={Paper}
         elevation={3}
         p={4}
@@ -120,12 +80,7 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
               Amount:
             </Typography>
           </Box>
-          {/* {expense.length !== 0  && expense.map((expense)=>(
-            <ExpenseItem expense = {expense} key={expense.id} />
-          ))} */}
-          {/* <h1>Group Page for ID: {id}</h1> */}
-        </Box>
-      </Box>
+        </Box> */}
     </Container>
   );
 };

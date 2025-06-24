@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../app/store';
 import { fetchMembersThunk } from '../features/group/groupSlice';
@@ -19,13 +19,12 @@ const MemberList: React.FC<Props> = ({ groupId, refresh }) => {
 
   return (
     <Grid container size={12}>
-      
         {members.length !== 0 ? (
           members.map((member, index) => (
             <React.Fragment key={index}>
             <Grid size={8}>
                 <Typography key={index} gutterBottom>
-                {member}
+                {member.name}
                 </Typography>
             </Grid>
             <Grid size={4}>

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createGroup, addMember, addExpense, exitGroup, fetchGroup, fetchMembers } from './groupApi';
+import { createGroup, addMember, exitGroup, fetchGroup, fetchMembers } from './groupApi';
 
 interface Group {
   _id: string;
@@ -13,7 +13,7 @@ interface GroupState {
   error: string | null;
   message: string | null;
   groups: Group[];
-  members: string[]; 
+  members: Member[]; 
 }
 
 
@@ -24,6 +24,11 @@ const initialState: GroupState = {
   groups: [],
   members: [],
 };
+
+interface Member {
+  _id: string;
+  name: string;
+}
 
 // Thunks
 export const fetchGroupThunk = createAsyncThunk<Group[], void, { rejectValue: string }>(
@@ -38,7 +43,7 @@ export const fetchGroupThunk = createAsyncThunk<Group[], void, { rejectValue: st
   }
 );
 
-export const fetchMembersThunk = createAsyncThunk<string[],                              // Return type
+export const fetchMembersThunk = createAsyncThunk<Member[],                              // Return type
   { groupId: string }, { rejectValue: string }>(
   'group/fetchMembers',
   async (payload: { groupId: string}, thunkAPI) => {
@@ -75,17 +80,6 @@ export const addMemberThunk = createAsyncThunk(
   }
 );
 
-export const addExpenseThunk = createAsyncThunk(
-  'group/addExpense',
-  async (payload: { groupTitle: string; title: string; amount: number; paidByName: string }, thunkAPI) => {
-    try {
-      const res = await addExpense(payload);
-      return res.message;
-    } catch (err: any) {
-      return thunkAPI.rejectWithValue(err.message);
-    }
-  }
-);
 
 export const exitGroupThunk = createAsyncThunk(
   'group/exit',
@@ -113,7 +107,6 @@ const groupSlice = createSlice({
   const thunks = [
     createGroupThunk,
     addMemberThunk,
-    addExpenseThunk,
     exitGroupThunk,
   ];
 

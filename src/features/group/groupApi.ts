@@ -39,20 +39,6 @@ export const addMember = async (data: { name: string; groupId: string }) => {
   return json;
 };
 
-export const addExpense = async (data: {
-  groupTitle: string;
-  title: string;
-  amount: number;
-  paidByName: string;
-}) => {
-  const res = await fetchWithAuth('http://localhost:5000/api/group/addExpense', {
-    method: 'POST',
-    body: JSON.stringify(data),
-  });
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.message || 'Failed to add expense');
-  return json;
-};
 
 export const exitGroup = async (data: { groupId: string }) => {
   const res = await fetchWithAuth('http://localhost:5000/api/group/exitGroup', {
