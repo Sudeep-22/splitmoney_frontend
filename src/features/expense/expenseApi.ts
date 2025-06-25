@@ -37,3 +37,13 @@ export const fetchAllExpense = async (data: { groupId: string }) => {
   if (!res.ok) throw new Error(json.message || 'Failed to fetch expenses');
   return json.expenses; 
 };
+
+export const fetchMemberContri = async (data: { groupId: string }) => {
+  const res = await fetchWithAuth('http://localhost:5000/api/expense/fetchMemberContri', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || 'Failed to fetch expenses');
+  return json.memberContributions; 
+};

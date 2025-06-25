@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addExpense, fetchAllExpense } from './expenseApi';
+import { addExpense, fetchAllExpense, fetchMemberContri } from './expenseApi';
 
 export const addExpenseThunk = createAsyncThunk(
   'expense/addExpense',
@@ -34,6 +34,17 @@ export const fetchAllExpenseThunk = createAsyncThunk(
   }
 );
 
+export const fetchMemberContriThunk = createAsyncThunk(
+  'expense/fetchMemberContri',
+  async (data: { groupId: string }, thunkAPI) => {
+    try {
+      return await fetchMemberContri(data); // returns array of MemberContri
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
 interface Expense {
   title: string;
   amount: number;
@@ -42,12 +53,20 @@ interface Expense {
 
 interface ExpenseState {
   expenses: Expense[];
+  memberContributions: MemberContri[];
   loading: boolean;
   error: string | null;
 }
 
+interface MemberContri {
+  memberId: string;
+  memberName: string;
+  netAmount: number;
+}
+
 const initialState: ExpenseState = {
   expenses: [],
+  memberContributions: [],
   loading: false,
   error: null,
 };
@@ -84,7 +103,20 @@ const expenseSlice = createSlice({
       .addCase(fetchAllExpenseThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-      });
+      })
+
+      .addCase(fetchMemberContriThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMemberContriThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.memberContributions = action.payload;
+      })
+      .addCase(fetchMemberContriThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
   },
 });
 

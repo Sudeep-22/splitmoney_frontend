@@ -93,6 +93,7 @@ export const exitGroupThunk = createAsyncThunk(
   }
 );
 
+
 // Slice
 const groupSlice = createSlice({
   name: 'group',

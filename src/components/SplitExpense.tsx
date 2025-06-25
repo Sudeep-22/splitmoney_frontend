@@ -22,6 +22,7 @@ interface ExpenseSplitProps{
     paidByUserId:string,
     handleClose:()=>void,
     triggerRefresh:()=>void,
+    resetForm:()=>void,
 }
 
 interface User {
@@ -45,7 +46,7 @@ const initializeUsers = (members: any[], totalExpense: number): User[] => {
 };
 
 
-const SplitExpense:React.FC<ExpenseSplitProps> = ({groupId, expenseTitle, totalExpense, paidByUserId,handleClose, triggerRefresh}) => {
+const SplitExpense:React.FC<ExpenseSplitProps> = ({groupId, expenseTitle, totalExpense, paidByUserId,handleClose, triggerRefresh, resetForm}) => {
     const [users, setUsers] = useState<User[]>([]);
     const dispatch = useDispatch<AppDispatch>();
     const { members , error } = useSelector((state: RootState) => state.group); 
@@ -141,8 +142,9 @@ const handleSubmit = () => {
       .unwrap()
       .then(() => {
         console.log("Expense added successfully");
-        handleClose();
+        resetForm();
         triggerRefresh();
+        handleClose();
       })
       .catch((err) => {
         console.error("Failed to add expense:", err);
@@ -192,6 +194,7 @@ const handleSubmit = () => {
                 <Grid size={{xs:12,sm:6}}>
                     <Button fullWidth variant="contained" color="warning" onClick={()=>{
                             setUsers(initializeUsers(members, totalExpense));
+                            resetForm();
                             handleClose();
                         }}
                         >

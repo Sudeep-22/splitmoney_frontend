@@ -6,32 +6,32 @@ import { fetchAllExpenseThunk } from '../features/expense/expenseSlice';
 
 interface Props {
   groupId: string;
-  refresh: boolean
+  refreshExpense: boolean;
 }
 
-const ExpenseList: React.FC<Props> = ({ groupId, refresh }) => {
+const ExpenseList: React.FC<Props> = ({ groupId, refreshExpense}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { expenses } = useSelector((state: RootState) => state.expense);
 
  useEffect(() => {
   dispatch(fetchAllExpenseThunk({ groupId }));
-}, [dispatch, groupId, refresh]);
+}, [dispatch, groupId, refreshExpense]);
 
   return (
     <Grid container size={12}>
         {expenses.length !== 0 ? (
           expenses.map((expense, index) => (
             <React.Fragment key={index}>
-            <Grid size={8}>
+            <Grid size={{xs:10,sm:8}}>
                 <Typography key={index} gutterBottom>
                 {expense.title}
                 </Typography>
             </Grid>
-            <Grid size={2}>
-                <Typography> Amount: </Typography>
+            <Grid size={2} sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Typography align='center'> Amount: </Typography>
             </Grid>
             <Grid size={2}>
-                <Typography> {expense.amount} </Typography>
+                <Typography> ₹{expense.amount} </Typography>
             </Grid>
             </React.Fragment>
           ))

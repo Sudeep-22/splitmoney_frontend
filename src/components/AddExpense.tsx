@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react'
-import { Container, Box, Paper, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent, TextField, Backdrop } from '@mui/material'
+import { Container, Box, Paper, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent, TextField, Backdrop, Input } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../app/store';
 import { clearMessage, addMemberThunk } from '../features/group/groupSlice';
@@ -56,6 +56,13 @@ const handleChange = (event: SelectChangeEvent) => {
     }
   }, [error]);
 
+  const resetForm = () => {
+  setExpenseTitle('');
+  setTotalExpense(0);
+  setSelectedName('');
+  setShowDetails(false);
+};
+
   return (<>
   
     <Container maxWidth={showDetails ? "md" : "sm"}>
@@ -69,6 +76,7 @@ const handleChange = (event: SelectChangeEvent) => {
            <Typography variant="h5" align="center" sx={{ marginBottom: 4}}>
                 Add Expense
             </Typography>
+            
             <TextField required fullWidth value={expenseTitle} onChange={(e)=>setExpenseTitle(e.target.value)} label="Expense Title" variant="standard" sx={{marginBottom:2}}/>
             <TextField required fullWidth value={totalExpense} onChange={(e)=>setTotalExpense(Number(e.target.value))} label="Total Expense" variant="standard" />
 
@@ -90,7 +98,7 @@ const handleChange = (event: SelectChangeEvent) => {
             </Select>
             <Grid container spacing={2}>
                 <Grid size={{xs:12,sm:6}}>
-                    <Button fullWidth variant="contained" color="primary" sx={{display:showDetails ? "none" : "flex"}} onClick={()=>setShowDetails( prev => !prev)}>
+                    <Button fullWidth variant="contained" type="submit" color="primary" sx={{display:showDetails ? "none" : "flex"}} onClick={()=>setShowDetails( prev => !prev)}>
                         Add Expense
                     </Button>
                 </Grid>
@@ -101,7 +109,7 @@ const handleChange = (event: SelectChangeEvent) => {
                 </Grid>
             </Grid>
             </FormControl>
-            {showDetails && <SplitExpense groupId={groupId} expenseTitle={expenseTitle} totalExpense={totalExpense!} paidByUserId={selectedName} handleClose={handleClose} triggerRefresh = {triggerRefresh}/>}
+            {showDetails && <SplitExpense groupId={groupId} expenseTitle={expenseTitle} totalExpense={totalExpense!} paidByUserId={selectedName} handleClose={handleClose} triggerRefresh = {triggerRefresh} resetForm= {resetForm}/>}
         </Box>
     </Container>
   </>)
