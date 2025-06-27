@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Container, Box, Paper, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent } from '@mui/material'
+import { Container, Box, Paper, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem, type SelectChangeEvent, useTheme } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../app/store';
 import { clearMessage, addMemberThunk } from '../features/group/groupSlice';
@@ -17,7 +17,7 @@ const AddMember:React.FC<setAlertProps> = ({setAlert, handleClose, groupId, trig
 const dispatch = useDispatch<AppDispatch>();
 const { users, error } = useSelector((state: RootState) => state.auth);
 const [selectedName, setSelectedName] = useState('');
-
+const theme = useTheme();
 useEffect(() => {
     dispatch(fetchAllUsersThunk());
   }, [dispatch]);
@@ -57,7 +57,8 @@ const handleChange = (event: SelectChangeEvent) => {
         elevation={3}
         p={4}
         mt={8}
-        sx={{ borderRadius: 2, backgroundColor: '#f9f9f9' }}
+        sx={{ borderRadius: 2, backgroundColor: theme.palette.background.paper, // ✅ dynamic background
+          color: theme.palette.text.primary }}
       >
         <Typography variant="h5" align="center" sx={{ marginBottom: 4}}>
           Add Member

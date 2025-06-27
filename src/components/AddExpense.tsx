@@ -1,11 +1,12 @@
 
 import React, { useEffect, useState } from 'react'
-import { Container, Box, Paper, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent, TextField, Backdrop, Input } from '@mui/material'
+import { Container, Box, Paper, Typography, Grid, Button, FormControl, InputLabel, Select, MenuItem, FormHelperText, type SelectChangeEvent, TextField, Backdrop, Input, FormLabel, RadioGroup, FormControlLabel, Radio, useTheme } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../app/store';
 import { clearMessage, addMemberThunk } from '../features/group/groupSlice';
 import { fetchMembersThunk } from "../features/group/groupSlice";
 import SplitExpense from './SplitExpense';
+import IndivisualSplitExpense from './IndivisualSplitExpense';
 
 interface setAlertProps {
   setAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string) => void;
@@ -23,6 +24,7 @@ const [selectedName, setSelectedName] = useState('');
 const [showDetails, setShowDetails] = useState(false);
 const [expenseTitle, setExpenseTitle] = useState('');
 const [totalExpense, setTotalExpense] = useState<number>(0);
+const [splitType, setSplitType] = useState<'equal' | 'individual'>('equal');
 
 useEffect(() => {
     dispatch(fetchMembersThunk({groupId}));
@@ -32,19 +34,6 @@ const handleChange = (event: SelectChangeEvent) => {
     setSelectedName(event.target.value);
 };
 
-//   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     dispatch(addMemberThunk({ name: selectedName, groupId }))
-//       .unwrap()
-//       .then(() => {
-//         handleClose();
-//         setAlert('success', 'Expense added successfully!');
-//         triggerRefresh();
-//       })
-//       .catch((err) => {
-//         setAlert('error', err);
-//       });
-// }
   
     useEffect(() => {
        if (error) {
@@ -63,6 +52,8 @@ const handleChange = (event: SelectChangeEvent) => {
   setShowDetails(false);
 };
 
+const theme= useTheme();
+
   return (<>
   
     <Container maxWidth={showDetails ? "md" : "sm"}>
@@ -71,7 +62,8 @@ const handleChange = (event: SelectChangeEvent) => {
         elevation={3}
         p={4}
         mt={8}
-        sx={{ borderRadius: 2, backgroundColor: '#f9f9f9' }}
+        sx={{ borderRadius: 2,  backgroundColor: theme.palette.background.paper, // ✅ dynamic background
+          color: theme.palette.text.primary, }}
         >
            <Typography variant="h5" align="center" sx={{ marginBottom: 4}}>
                 Add Expense
@@ -109,7 +101,21 @@ const handleChange = (event: SelectChangeEvent) => {
                 </Grid>
             </Grid>
             </FormControl>
-            {showDetails && <SplitExpense groupId={groupId} expenseTitle={expenseTitle} totalExpense={totalExpense!} paidByUserId={selectedName} handleClose={handleClose} triggerRefresh = {triggerRefresh} resetForm= {resetForm}/>}
+            <FormControl>
+              <RadioGroup
+                row
+                aria-labelledby="split-type-radio"
+                name="split-type"
+                value={splitType}
+                onChange={(e) => setSplitType(e.target.value as 'equal' | 'individual')}
+              >
+                <FormControlLabel value="equal" control={<Radio />} label="Split Equally" />
+                <FormControlLabel value="individual" control={<Radio />} label="Individual Contribution" />
+              </RadioGroup>
+            </FormControl>
+                    
+            {showDetails && splitType === 'equal' && (<SplitExpense groupId={groupId} expenseTitle={expenseTitle} totalExpense={totalExpense!} paidByUserId={selectedName} handleClose={handleClose} triggerRefresh = {triggerRefresh} resetForm= {resetForm}/>)}
+            {showDetails && splitType === 'individual' && (<IndivisualSplitExpense groupId={groupId} expenseTitle={expenseTitle} totalExpense={totalExpense!} paidByUserId={selectedName} handleClose={handleClose} triggerRefresh = {triggerRefresh} resetForm= {resetForm}/>)}
         </Box>
     </Container>
   </>)

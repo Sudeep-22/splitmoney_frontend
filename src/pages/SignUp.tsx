@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Paper, Typography, Button } from '@mui/material';
+import { Container, Box, Paper, Typography, Button, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,6 +18,7 @@ const SignUp: React.FC<setAlertProps> = ({ setAlert }) => {
   const [password, setPassword] = useState('');
   const [repassword, setRepassword] = useState('');
   const [errorPassword, setErrorPassword] = useState(false);
+  const theme = useTheme();
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -59,7 +60,9 @@ const SignUp: React.FC<setAlertProps> = ({ setAlert }) => {
         elevation={3}
         p={4}
         mt={8}
-        sx={{ borderRadius: 2, backgroundColor: '#f9f9f9' }}
+        sx={{ borderRadius: 2, 
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary }}
       >
         <Typography variant="h5" align="center" sx={{ marginBottom: 4 }}>
           Create Account
@@ -110,7 +113,7 @@ const SignUp: React.FC<setAlertProps> = ({ setAlert }) => {
               />
             </Grid>
             <Grid size={12}>
-              <Button fullWidth variant="contained" color="primary" type="submit" disabled={auth.loading}>
+              <Button fullWidth variant="contained" type="submit" disabled={auth.loading}>
                 {auth.loading ? 'Creating...' : 'Sign Up'}
               </Button>
             </Grid>

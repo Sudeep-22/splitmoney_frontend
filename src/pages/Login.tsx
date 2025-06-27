@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Box, Paper, Typography, Button } from '@mui/material';
+import { Container, Box, Paper, Typography, Button, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,7 @@ const Login:React.FC<setAlertProps> = ({setAlert}) =>{
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorPassword, setErrorPassword] = useState(false);
+  const theme = useTheme();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -59,7 +60,9 @@ const Login:React.FC<setAlertProps> = ({setAlert}) =>{
         elevation={3}
         p={4}
         mt={8}
-        sx={{ borderRadius: 2, backgroundColor: '#f9f9f9' }}
+        sx={{ borderRadius: 2, 
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary }}
       >
         <Typography variant="h5" align="center" sx={{ marginBottom: 4}}>
           Login
@@ -87,11 +90,10 @@ const Login:React.FC<setAlertProps> = ({setAlert}) =>{
               onChange={(e) => setPassword(e.target.value)}
               error = {errorPassword}
               helperText = {errorPassword && "Incorrect password"}
-              // margin="normal"
             />
           </Grid>
           <Grid size={12}>
-            <Button fullWidth variant="contained" color="primary" type='submit'>
+            <Button fullWidth variant="contained" type='submit'>
               Sign In
             </Button>
           </Grid>

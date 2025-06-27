@@ -11,10 +11,12 @@ import type { RootState } from '../app/store';
 import AvatarWithOptions from "./AvatarWithOptions";
 
 interface setAlertProps {
+  mode: 'light'|'dark';
+  toggleMode:()=>void;
   setAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string) => void;
 }
 
-const Appbar:React.FC<setAlertProps> = ({setAlert}) => {
+const Appbar:React.FC<setAlertProps> = ({mode, toggleMode, setAlert}) => {
   const Navigate = useNavigate();
   const Location = useLocation();
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
@@ -42,6 +44,7 @@ const Appbar:React.FC<setAlertProps> = ({setAlert}) => {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button variant="contained" onClick={toggleMode}>{mode=='light'?"Dark Mode": "Light Mode"}</Button>
             {!accessToken && Location.pathname === "/login" && (
               <Button variant="contained" color="secondary" onClick={() => Navigate('/signUp')}>
                 Sign Up

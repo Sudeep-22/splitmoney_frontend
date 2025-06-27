@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addExpense, fetchAllExpense, fetchMemberContri } from './expenseApi';
+import { addExpense, fetchAllExpense, fetchExpenseContri, fetchMemberContri } from './expenseApi';
 
 export const addExpenseThunk = createAsyncThunk(
   'expense/addExpense',
@@ -45,7 +45,36 @@ export const fetchMemberContriThunk = createAsyncThunk(
   }
 );
 
+export const fetchExpenseContriThunk = createAsyncThunk(
+  'expense/fetchExpenseContri',
+  async (data: { expenseId: string }, thunkAPI) => {
+    try {
+      return await fetchExpenseContri(data); 
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+interface DetailedExpense {
+  expenseId: string;
+  title: string;
+  totalAmount: number;
+  paidByUser: {
+    id: string;
+    name: string;
+  };
+  contributions: {
+    paidToUser: {
+      id: string;
+      name: string;
+    };
+    amount: number;
+  }[];
+}
+
 interface Expense {
+  id: string, 
   title: string;
   amount: number;
   paidByName: string;
@@ -54,6 +83,7 @@ interface Expense {
 interface ExpenseState {
   expenses: Expense[];
   memberContributions: MemberContri[];
+  expenseDetail: DetailedExpense | null;
   loading: boolean;
   error: string | null;
 }
@@ -67,6 +97,7 @@ interface MemberContri {
 const initialState: ExpenseState = {
   expenses: [],
   memberContributions: [],
+  expenseDetail: null,
   loading: false,
   error: null,
 };
@@ -114,6 +145,20 @@ const expenseSlice = createSlice({
         state.memberContributions = action.payload;
       })
       .addCase(fetchMemberContriThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+
+      .addCase(fetchExpenseContriThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchExpenseContriThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.expenseDetail = action.payload;
+      })
+      .addCase(fetchExpenseContriThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

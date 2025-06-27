@@ -96,9 +96,11 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchAllUsersThunk.fulfilled, (state, action) => {
+        state.loading = false;
     state.users = action.payload;
   })
   .addCase(fetchAllUsersThunk.rejected, (state, action) => {
+    state.loading = false;
     state.error = action.payload as string;
   });
   },
