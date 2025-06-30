@@ -203,6 +203,7 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
             }}
             color="error"
             variant="contained"
+            sx={{ margin: 2 }}
           >
             Exit
           </Button>

@@ -10,6 +10,8 @@ import {
   Typography,
   DialogActions,
   Button,
+  Box,
+  Divider,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../app/store";
@@ -73,6 +75,12 @@ const AvatarWithOptions: React.FC<setAlertProps> = ({ setAlert }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
+        <Box px={2} py={1}>
+          <Typography variant="subtitle1" fontWeight="bold">
+            Hi, {user?.name}
+          </Typography>
+        </Box>
+        <Divider />
         <MenuItem onClick={() => setOpenConfirm(true)}>Delete Profile</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
@@ -95,6 +103,7 @@ const AvatarWithOptions: React.FC<setAlertProps> = ({ setAlert }) => {
             }}
             color="error"
             variant="contained"
+            sx={{margin:2}}
           >
             Exit
           </Button>

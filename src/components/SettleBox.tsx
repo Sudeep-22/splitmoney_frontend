@@ -149,7 +149,7 @@ const SettleBox: React.FC<setAlertProps> = ({
             </Grid>
           ))
         ) : (
-          <Typography variant="h5">Expenses have been settled.</Typography>
+          <Typography variant="h6">All expenses have been settled.</Typography>
         )}
       </Box>
     </Container>

@@ -34,13 +34,13 @@ export const registerThunk = createAsyncThunk(
 // 🔹 LOGIN
 export const loginThunk = createAsyncThunk(
   "auth/login",
-  async ({ name, password }: { name: string; password: string }, thunkAPI) => {
+  async ({ email, password }: { email: string; password: string }, thunkAPI) => {
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ name, password }),
+        body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Login failed");

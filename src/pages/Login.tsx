@@ -30,7 +30,7 @@ const Login: React.FC<setAlertProps> = ({ setAlert }) => {
   const dispatch = useDispatch<AppDispatch>();
   const auth = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -51,7 +51,7 @@ const Login: React.FC<setAlertProps> = ({ setAlert }) => {
       return;
     }
 
-    dispatch(loginThunk({ name: username, password }));
+    dispatch(loginThunk({ email, password }));
   };
 
   useEffect(() => {
@@ -93,10 +93,10 @@ const Login: React.FC<setAlertProps> = ({ setAlert }) => {
               <TextField
                 fullWidth
                 required
-                label="Username"
+                label="Email"
                 variant="outlined"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
             <Grid size={12}>
