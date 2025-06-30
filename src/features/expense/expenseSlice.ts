@@ -1,9 +1,16 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { addExpense, fetchAllExpense, fetchExpenseContri, fetchMemberContri } from './expenseApi';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  addExpense,
+  fetchAllExpense,
+  fetchExpenseContri,
+  fetchMemberContri,
+  deleteExpense,
+} from "./expenseApi";
 
 export const addExpenseThunk = createAsyncThunk(
-  'expense/addExpense',
-  async (expenseData: {
+  "expense/addExpense",
+  async (
+    expenseData: {
       groupId: string;
       expense: {
         title: string;
@@ -14,7 +21,9 @@ export const addExpenseThunk = createAsyncThunk(
         paidToUserId: string;
         amount: number;
       }[];
-    }, thunkAPI) => {
+    },
+    thunkAPI
+  ) => {
     try {
       return await addExpense(expenseData);
     } catch (err: any) {
@@ -24,7 +33,7 @@ export const addExpenseThunk = createAsyncThunk(
 );
 
 export const fetchAllExpenseThunk = createAsyncThunk(
-  'expense/fetchAllExpense',
+  "expense/fetchAllExpense",
   async (groupData: { groupId: string }, thunkAPI) => {
     try {
       return await fetchAllExpense(groupData);
@@ -35,10 +44,10 @@ export const fetchAllExpenseThunk = createAsyncThunk(
 );
 
 export const fetchMemberContriThunk = createAsyncThunk(
-  'expense/fetchMemberContri',
+  "expense/fetchMemberContri",
   async (data: { groupId: string }, thunkAPI) => {
     try {
-      return await fetchMemberContri(data); // returns array of MemberContri
+      return await fetchMemberContri(data);
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -46,10 +55,21 @@ export const fetchMemberContriThunk = createAsyncThunk(
 );
 
 export const fetchExpenseContriThunk = createAsyncThunk(
-  'expense/fetchExpenseContri',
+  "expense/fetchExpenseContri",
   async (data: { expenseId: string }, thunkAPI) => {
     try {
-      return await fetchExpenseContri(data); 
+      return await fetchExpenseContri(data);
+    } catch (err: any) {
+      return thunkAPI.rejectWithValue(err.message);
+    }
+  }
+);
+
+export const deleteExpenseThunk = createAsyncThunk(
+  "expense/deleteExpense",
+  async (data: { expenseId: string }, thunkAPI) => {
+    try {
+      return await deleteExpense(data);
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message);
     }
@@ -61,12 +81,12 @@ interface DetailedExpense {
   title: string;
   totalAmount: number;
   paidByUser: {
-    id: string;
+    id: string | null;
     name: string;
   };
   contributions: {
     paidToUser: {
-      id: string;
+      id: string | null;
       name: string;
     };
     amount: number;
@@ -74,7 +94,7 @@ interface DetailedExpense {
 }
 
 interface Expense {
-  id: string, 
+  id: string;
   title: string;
   amount: number;
   paidByName: string;
@@ -103,7 +123,7 @@ const initialState: ExpenseState = {
 };
 
 const expenseSlice = createSlice({
-  name: 'expense',
+  name: "expense",
   initialState,
   reducers: {
     clearExpenseError: (state) => {
@@ -149,7 +169,6 @@ const expenseSlice = createSlice({
         state.error = action.payload as string;
       })
 
-
       .addCase(fetchExpenseContriThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -162,6 +181,20 @@ const expenseSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+
+      .addCase(deleteExpenseThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteExpenseThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        const deletedId = action.meta.arg.expenseId;
+        state.expenses = state.expenses.filter((exp) => exp.id !== deletedId);
+      })
+      .addCase(deleteExpenseThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

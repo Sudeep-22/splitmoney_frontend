@@ -1,5 +1,13 @@
-import { Backdrop, Box, Button, Grid, Paper, Typography, useTheme } from "@mui/material";
-import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  Dialog,
+  Grid,
+  Paper,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import React from "react";
 import AddMember from "./AddMember";
 import MemberList from "./MemberList";
 
@@ -33,14 +41,16 @@ const MemberSection: React.FC<MemberProps> = ({
       elevation={3}
       p={4}
       mt={4}
-      sx={{ borderRadius: 2, backgroundColor: theme.palette.background.paper, marginBottom: 4,color: theme.palette.text.primary }}
+      sx={{
+        borderRadius: 2,
+        backgroundColor: theme.palette.background.paper,
+        marginBottom: 4,
+        color: theme.palette.text.primary,
+      }}
     >
       <Grid container alignItems="center" sx={{ marginBottom: 2 }}>
         <Grid size={8}>
-          <Typography variant="h4">
-            {" "}
-            Members{" "}
-          </Typography>
+          <Typography variant="h4"> Members </Typography>
         </Grid>
         <Grid size={4} sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button variant="contained" onClick={handleOpen}>
@@ -49,29 +59,19 @@ const MemberSection: React.FC<MemberProps> = ({
           </Button>
         </Grid>
       </Grid>
-      <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
+      <Dialog
         open={openAddMember}
+        onClose={handleClose}
+        fullWidth
+        maxWidth="sm"
       >
-        <Box
-          sx={{
-            maxHeight: "90vh",
-            overflowY: "auto",
-            width: "90%",
-            maxWidth: 600,
-            bgcolor: "background.paper",
-            borderRadius: 2,
-            p: 3,
-          }}
-        >
-          <AddMember
-            setAlert={setAlert}
-            handleClose={handleClose}
-            groupId={id!}
-            triggerRefresh={triggerRefresh}
-          />
-        </Box>
-      </Backdrop>
+        <AddMember
+          setAlert={setAlert}
+          handleClose={handleClose}
+          groupId={id!}
+          triggerRefresh={triggerRefresh}
+        />
+      </Dialog>
       <hr />
       <MemberList groupId={id!} refresh={refreshExpense} />
     </Box>

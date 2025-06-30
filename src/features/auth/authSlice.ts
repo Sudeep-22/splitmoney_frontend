@@ -1,15 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { AuthState } from './authTypes';
-import { saveToken } from './authUtils';
+import { createSlice } from "@reduxjs/toolkit";
+import type { AuthState } from "./authTypes";
+import { saveToken } from "./authUtils";
 import {
   loginThunk,
   logoutThunk,
   registerThunk,
   refreshAccessTokenThunk,
   deleteUserThunk,
-  fetchAllUsersThunk
-} from './authThunks';
-import { getToken, getStoredUser } from './authUtils';
+  fetchAllUsersThunk,
+} from "./authThunks";
+import { getToken, getStoredUser } from "./authUtils";
 
 const initialState: AuthState = {
   user: getStoredUser(),
@@ -17,11 +17,11 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   message: null,
-  users: [], 
+  users: [],
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     clearAuthState: (state) => {
@@ -40,7 +40,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
-        state.message = 'Registered successfully';
+        state.message = "Registered successfully";
       })
       .addCase(registerThunk.rejected, (state, action) => {
         state.loading = false;
@@ -55,7 +55,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.accessToken = action.payload.accessToken;
-        state.message = 'Login successful';
+        state.message = "Login successful";
       })
       .addCase(loginThunk.rejected, (state, action) => {
         state.loading = false;
@@ -77,7 +77,7 @@ const authSlice = createSlice({
       .addCase(logoutThunk.fulfilled, (state) => {
         state.user = null;
         state.accessToken = null;
-        state.message = 'Logged out successfully';
+        state.message = "Logged out successfully";
       })
       .addCase(logoutThunk.rejected, (state, action) => {
         state.error = action.payload as string;
@@ -85,24 +85,25 @@ const authSlice = createSlice({
       .addCase(deleteUserThunk.fulfilled, (state) => {
         state.user = null;
         state.accessToken = null;
-        state.message = 'Deleted user successfully';
+        state.message = "Deleted user successfully";
       })
       .addCase(deleteUserThunk.rejected, (state, action) => {
         state.error = action.payload as string;
       })
-//FetchAllUsers
+
+      //FetchAllUsers
       .addCase(fetchAllUsersThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchAllUsersThunk.fulfilled, (state, action) => {
         state.loading = false;
-    state.users = action.payload;
-  })
-  .addCase(fetchAllUsersThunk.rejected, (state, action) => {
-    state.loading = false;
-    state.error = action.payload as string;
-  });
+        state.users = action.payload;
+      })
+      .addCase(fetchAllUsersThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 

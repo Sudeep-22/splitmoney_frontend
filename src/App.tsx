@@ -15,67 +15,74 @@ import { refreshAccessTokenThunk } from "./features/auth/authThunks";
 import { Box, CircularProgress } from "@mui/material";
 import ExpensePage from "./pages/ExpensePage";
 import { CssBaseline } from "@mui/material";
-
+import { getToken } from "./features/auth/authUtils";
 
 function App() {
-  const [mode, setMode] = useState<'light' | 'dark'>('light');
-  const toggleMode = () => {
-    setMode(prev => (prev === 'light' ? 'dark' : 'light'));
-  }
+  const [mode, setMode] = useState<"light" | "dark">(
+    () => (localStorage.getItem("appThemeMode") as "light" | "dark") || "light"
+  );
 
-const theme = useMemo(
-  () =>
-    createTheme({
-      palette: {
-        mode,
-        ...(mode === 'light'
-          ? {
-              primary: {
-                main: '#387478',
-                light: '#629584',
-                dark: '#243642',
-                contrastText: '#fff',
-              },
-              secondary: {
-                main: '#E2F1E7',
-                contrastText: '#243642',
-              },
-              background: {
-                default: '#E2F1E7',
-                paper: '#ffffff',
-              },
-              text: {
-                primary: '#243642',
-                secondary: '#387478',
-              },
-            }
-          : {
-              primary: {
-                main: '#629584',
-                light: '#82b29d',
-                dark: '#387478',
-                contrastText: '#fff',
-              },
-              secondary: {
-                main: '#243642',
-                contrastText: '#E2F1E7',
-              },
-              background: {
-                default: '#1e2a2f', // Softer than pure black
-                paper: '#273845',
-              },
-              text: {
-                primary: '#E2F1E7',
-                secondary: '#a0c8b8',
-              },
-            }),
-      },
-    }),
-  [mode]
-);
+  const toggleMode = () => {
+    setMode((prev) => {
+      const newMode = prev === "light" ? "dark" : "light";
+      localStorage.setItem("appThemeMode", newMode);
+      return newMode;
+    });
+  };
+
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode,
+          ...(mode === "light"
+            ? {
+                primary: {
+                  main: "#387478",
+                  light: "#629584",
+                  dark: "#243642",
+                  contrastText: "#fff",
+                },
+                secondary: {
+                  main: "#E2F1E7",
+                  contrastText: "#243642",
+                },
+                background: {
+                  default: "#E2F1E7",
+                  paper: "#ffffff",
+                },
+                text: {
+                  primary: "#243642",
+                  secondary: "#387478",
+                },
+              }
+            : {
+                primary: {
+                  main: "#629584",
+                  light: "#82b29d",
+                  dark: "#387478",
+                  contrastText: "#fff",
+                },
+                secondary: {
+                  main: "#243642",
+                  contrastText: "#E2F1E7",
+                },
+                background: {
+                  default: "#1e2a2f", // Softer than pure black
+                  paper: "#273845",
+                },
+                text: {
+                  primary: "#E2F1E7",
+                  secondary: "#a0c8b8",
+                },
+              }),
+        },
+      }),
+    [mode]
+  );
 
   const dispatch = useDispatch<AppDispatch>();
-  const [isAppReady, setAppReady] = useState(false); 
+  const [isAppReady, setAppReady] = useState(false);
 
   const [alertContent, chgAlertContent] = useState<{
     type: "error" | "info" | "success" | "warning";
@@ -89,12 +96,18 @@ const theme = useMemo(
     chgAlertContent({ type, content: message });
     setTimeout(() => {
       chgAlertContent(null);
-    }, 1500);
+    }, 2000);
   };
 
   useEffect(() => {
     const initialize = async () => {
       try {
+        const token = getToken();
+        if (!token) {
+          setAppReady(true);
+          return;
+        }
+
         const result = await dispatch(refreshAccessTokenThunk());
 
         if (!refreshAccessTokenThunk.fulfilled.match(result)) {
@@ -112,7 +125,12 @@ const theme = useMemo(
 
   if (!isAppReady) {
     return (
-      <Box display="flex" height="100vh" alignItems="center" justifyContent="center">
+      <Box
+        display="flex"
+        height="100vh"
+        alignItems="center"
+        justifyContent="center"
+      >
         <CircularProgress />
       </Box>
     );
@@ -121,7 +139,7 @@ const theme = useMemo(
   return (
     <>
       <ThemeProvider theme={theme}>
-        <CssBaseline /> 
+        <CssBaseline />
         <BrowserRouter>
           <Appbar mode={mode} toggleMode={toggleMode} setAlert={setAlert} />
           <AlertTab alert={alertContent} />

@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../app/store";
-import { Box, Button, Container, Grid, Paper, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import {
   addExpenseThunk,
   fetchMemberContriThunk,
@@ -80,33 +88,30 @@ const SettleBox: React.FC<setAlertProps> = ({
       <Box
         component={Paper}
         elevation={3}
-        sx={{ borderRadius: 2, backgroundColor: theme.palette.background.paper, // ✅ dynamic background
-          color: theme.palette.text.primary, padding:4, marginTop:6 }}
+        sx={{
+          borderRadius: 2,
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+          padding: 4,
+          margin: 4,
+        }}
       >
-        <Box
-          sx={{
-            position: "relative",
-            textAlign: "center",
-            marginBottom: 4,
-          }}
-        >
+        <Box>
           <Button
             onClick={handleClose}
             startIcon={<ArrowBackIcon />}
             sx={{
-              position: "absolute",
-              left: 0,
-              top: "50%",
-              transform: "translateY(-50%)",
+              mb: 2,
+              color: theme.palette.primary.main,
             }}
           >
             Back
           </Button>
-
-          <Typography variant="h4" align="center">
-            Settle Amounts
-          </Typography>
         </Box>
+
+        <Typography variant="h4" align="center" sx={{ marginBottom: 4 }}>
+          Settle Amounts
+        </Typography>
         {pendingMemberContri.length > 0 ? (
           pendingMemberContri.map((pm) => (
             <Grid container key={pm.memberId} spacing={2}>

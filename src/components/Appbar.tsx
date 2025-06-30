@@ -6,17 +6,23 @@ import Container from "@mui/material/Container";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
 import Button from "@mui/material/Button";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import type { RootState } from '../app/store';
+import { useSelector } from "react-redux";
+import type { RootState } from "../app/store";
 import AvatarWithOptions from "./AvatarWithOptions";
+import SunnyIcon from "@mui/icons-material/Sunny";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import { IconButton, Tooltip } from "@mui/material";
 
 interface setAlertProps {
-  mode: 'light'|'dark';
-  toggleMode:()=>void;
-  setAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string) => void;
+  mode: "light" | "dark";
+  toggleMode: () => void;
+  setAlert: (
+    type: "error" | "info" | "success" | "warning",
+    message: string
+  ) => void;
 }
 
-const Appbar:React.FC<setAlertProps> = ({mode, toggleMode, setAlert}) => {
+const Appbar: React.FC<setAlertProps> = ({ mode, toggleMode, setAlert }) => {
   const Navigate = useNavigate();
   const Location = useLocation();
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
@@ -24,7 +30,15 @@ const Appbar:React.FC<setAlertProps> = ({mode, toggleMode, setAlert}) => {
   return (
     <AppBar position="static">
       <Container maxWidth="xl" disableGutters>
-        <Toolbar disableGutters sx={{ display: "flex", justifyContent: "space-between", paddingLeft: 4, paddingRight: 4 }}>
+        <Toolbar
+          disableGutters
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            paddingLeft: 4,
+            paddingRight: 4,
+          }}
+        >
           <Box alignItems="center">
             <Typography
               variant="h6"
@@ -43,21 +57,58 @@ const Appbar:React.FC<setAlertProps> = ({mode, toggleMode, setAlert}) => {
               Split Money
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button variant="contained" onClick={toggleMode}>{mode=='light'?"Dark Mode": "Light Mode"}</Button>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Tooltip
+              title={
+                mode === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
+              }
+            >
+              <IconButton
+                aria-label={mode === "dark" ? "Light Mode" : "Dark Mode"}
+                onClick={toggleMode}
+                edge="end"
+                sx={{
+                  mx: 2,
+                  bgcolor: (theme) =>
+                    mode === "dark"
+                      ? theme.palette.secondary.main
+                      : theme.palette.background.paper,
+                  color: (theme) =>
+                    mode === "dark"
+                      ? theme.palette.primary.contrastText
+                      : theme.palette.text.primary,
+                  borderRadius: "50%",
+                  transition: "background-color 0.3s, color 0.3s",
+                  "&:hover": {
+                    bgcolor: (theme) =>
+                      mode === "dark"
+                        ? theme.palette.background.default
+                        : theme.palette.secondary.dark,
+                  },
+                }}
+              >
+                {mode === "dark" ? <SunnyIcon /> : <DarkModeIcon />}
+              </IconButton>
+            </Tooltip>
             {!accessToken && Location.pathname === "/login" && (
-              <Button variant="contained" color="secondary" onClick={() => Navigate('/signUp')}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => Navigate("/signUp")}
+              >
                 Sign Up
               </Button>
             )}
             {!accessToken && Location.pathname === "/signUp" && (
-              <Button variant="contained" color="secondary" onClick={() => Navigate('/login')}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => Navigate("/login")}
+              >
                 Log In
               </Button>
             )}
-            {accessToken && user && (
-              <AvatarWithOptions setAlert={setAlert}/>
-            )}
+            {accessToken && user && <AvatarWithOptions setAlert={setAlert} />}
           </Box>
         </Toolbar>
       </Container>
