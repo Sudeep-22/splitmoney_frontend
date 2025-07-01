@@ -158,14 +158,14 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
           alignItems="center"
           sx={{ p: 2, my: 2, border: "1px solid #ccc", borderRadius: 2 }}
         >
-          <Grid size={{ xs: 4, sm: 1 }}>
+          <Grid size={{ xs: 2, sm: 1 }}>
             <Checkbox
               checked={user.isIncluded}
               onChange={(e) => handleCheckboxChange(user._id, e.target.checked)}
             />
           </Grid>
-          <Grid size={{ xs: 8, sm: 7 }}>
-            <Typography variant="h6" sx={{paddingLeft:2}}> {user.name} </Typography>
+          <Grid size={{ xs: 10, sm: 7 }}>
+            <Typography variant="h6" sx={{paddingLeft:{sx:0,md:2}}}> {user.name} </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <TextField

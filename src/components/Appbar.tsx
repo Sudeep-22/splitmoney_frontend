@@ -4,8 +4,6 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import PriceCheckIcon from "@mui/icons-material/PriceCheck";
-import Button from "@mui/material/Button";
-import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../app/store";
 import AvatarWithOptions from "./AvatarWithOptions";
@@ -23,8 +21,6 @@ interface setAlertProps {
 }
 
 const Appbar: React.FC<setAlertProps> = ({ mode, toggleMode, setAlert }) => {
-  const Navigate = useNavigate();
-  const Location = useLocation();
   const { user, accessToken } = useSelector((state: RootState) => state.auth);
 
   return (
@@ -35,8 +31,7 @@ const Appbar: React.FC<setAlertProps> = ({ mode, toggleMode, setAlert }) => {
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            paddingLeft: 4,
-            paddingRight: 4,
+            paddingX:2
           }}
         >
           <Box alignItems="center">
@@ -57,7 +52,7 @@ const Appbar: React.FC<setAlertProps> = ({ mode, toggleMode, setAlert }) => {
               Split Money
             </Typography>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <Tooltip
               title={
                 mode === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"
@@ -68,7 +63,7 @@ const Appbar: React.FC<setAlertProps> = ({ mode, toggleMode, setAlert }) => {
                 onClick={toggleMode}
                 edge="end"
                 sx={{
-                  mx: 2,
+                  mx: {xs:0,sm:2},
                   bgcolor: (theme) =>
                     mode === "dark"
                       ? theme.palette.secondary.main
@@ -90,24 +85,6 @@ const Appbar: React.FC<setAlertProps> = ({ mode, toggleMode, setAlert }) => {
                 {mode === "dark" ? <SunnyIcon /> : <DarkModeIcon />}
               </IconButton>
             </Tooltip>
-            {!accessToken && Location.pathname === "/login" && (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => Navigate("/signUp")}
-              >
-                Sign Up
-              </Button>
-            )}
-            {!accessToken && Location.pathname === "/signUp" && (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() => Navigate("/login")}
-              >
-                Log In
-              </Button>
-            )}
             {accessToken && user && <AvatarWithOptions setAlert={setAlert} />}
           </Box>
         </Toolbar>

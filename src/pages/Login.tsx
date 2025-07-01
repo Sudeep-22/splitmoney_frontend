@@ -142,12 +142,20 @@ const Login: React.FC<setAlertProps> = ({ setAlert }) => {
                 </Typography>
               </Grid>
             )}
-
             <Grid size={12}>
               <Button fullWidth variant="contained" type="submit">
                 Sign In
               </Button>
             </Grid>
+
+            <Typography variant="body2" color="warning">Dont have an account: Sign Up now</Typography>
+
+            <Grid size={12}>
+              <Button fullWidth variant="contained" type="submit" onClick={() => navigate("/signUp")}>
+                Sign Up
+              </Button>
+            </Grid>
+
           </Grid>
         </form>
       </Box>
