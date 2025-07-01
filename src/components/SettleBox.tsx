@@ -84,18 +84,21 @@ const SettleBox: React.FC<setAlertProps> = ({
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth={false} disableGutters>
       <Box
-        component={Paper}
-        elevation={3}
-        sx={{
-          borderRadius: 2,
-          backgroundColor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
-          padding: 4,
-          margin: 4,
-        }}
-      >
+  component={Paper}
+  elevation={3}
+  sx={{
+    borderRadius: 2,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    padding: 4,
+    width: '100%',
+    boxSizing: 'border-box', // Ensures padding doesn't overflow
+    border: '1px solid',     // Add border
+    borderColor: theme.palette.divider, 
+  }}
+>
         <Box>
           <Button
             onClick={handleClose}
@@ -113,8 +116,9 @@ const SettleBox: React.FC<setAlertProps> = ({
         </Typography>
         {pendingMemberContri.length > 0 ? (
           pendingMemberContri.map((pm) => (
-            <Grid container key={pm.memberId} spacing={2}>
-              <Grid size={{ xs: 8, sm: 4 }}>
+            <Box key={pm.memberId} sx={{ mb: 2 }}>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 4, sm: 4 }}>
                 <Typography variant="h6" align="left">
                   {pm.memberName}
                 </Typography>
@@ -129,7 +133,7 @@ const SettleBox: React.FC<setAlertProps> = ({
                 </Typography>
               </Grid>
               <Grid
-                size={{ xs: 12, sm: 4 }}
+                size={{ xs: 4, sm: 4 }}
                 sx={{ textAlign: { xs: "center", sm: "right" } }}
               >
                 <Button
@@ -146,6 +150,7 @@ const SettleBox: React.FC<setAlertProps> = ({
                 </Button>
               </Grid>
             </Grid>
+            </Box>
           ))
         ) : (
           <Typography variant="h6">All expenses have been settled.</Typography>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Container,
   Box,
   Paper,
   Typography,
@@ -59,12 +58,10 @@ const AddGroupBox: React.FC<setAlertProps> = ({ setAlert, handleClose }) => {
   }, [auth.error]);
 
   return (
-    <Container maxWidth="sm">
       <Box
         component={Paper}
         elevation={3}
         p={4}
-        m={4}
         sx={{
           borderRadius: 2,
           backgroundColor: theme.palette.background.paper,
@@ -120,7 +117,6 @@ const AddGroupBox: React.FC<setAlertProps> = ({ setAlert, handleClose }) => {
           </Grid>
         </form>
       </Box>
-    </Container>
   );
 };
 

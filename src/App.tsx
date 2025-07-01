@@ -19,7 +19,7 @@ import { getToken } from "./features/auth/authUtils";
 
 function App() {
   const [mode, setMode] = useState<"light" | "dark">(
-    () => (localStorage.getItem("appThemeMode") as "light" | "dark") || "light"
+    () => (localStorage.getItem("appThemeMode") as "light" | "dark") || "dark"
   );
 
   const toggleMode = () => {

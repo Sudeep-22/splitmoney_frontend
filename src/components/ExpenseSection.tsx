@@ -59,7 +59,7 @@ const ExpenseSection: React.FC<ExpenseProps> = ({
         </Grid>
       </Grid>
 
-      <Dialog open={openAddExpense} onClose={handleClose} maxWidth={false}>
+      <Dialog open={openAddExpense} onClose={handleClose} maxWidth="sm" fullWidth>
         <Suspense fallback={<Box p={3}><CircularProgress /></Box>}>
           <AddExpense
             setAlert={setAlert}

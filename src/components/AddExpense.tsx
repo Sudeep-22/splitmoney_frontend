@@ -1,8 +1,6 @@
 import React, { useEffect, useState, lazy, Suspense } from "react";
 import {
-  Container,
   Box,
-  Paper,
   Typography,
   Grid,
   Button,
@@ -83,17 +81,18 @@ const AddExpense: React.FC<setAlertProps> = ({
   const theme = useTheme();
 
   return (
-    <Container maxWidth={showDetails ? "md" : "sm"}>
       <Box
-        component={Paper}
-        elevation={3}
-        p={4}
-        m={4}
-        sx={{
-          borderRadius: 2,
-          backgroundColor: theme.palette.background.paper,
-          color: theme.palette.text.primary,
-        }}
+        m={{ xs: 0 }} 
+        p={{xs:2,sm:4}}
+    sx={{
+    borderRadius: 2,
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    width: '100%',
+    maxWidth: '90vw',
+    // overflowX: 'hidden',
+    boxSizing: 'border-box',
+  }}
       >
         <Typography variant="h5" align="center" sx={{ marginBottom: 4 }}>
           Add Expense
@@ -243,7 +242,7 @@ const AddExpense: React.FC<setAlertProps> = ({
           )}
         </Suspense>
       </Box>
-    </Container>
+    
   );
 };
 

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Container,
   Box,
   Paper,
   Typography,
@@ -75,12 +74,11 @@ const AddMember: React.FC<setAlertProps> = ({
   }, [error]);
 
   return (
-    <Container maxWidth="sm">
       <Box
         component={Paper}
         elevation={3}
         p={4}
-        m={4}
+        m={0}
         sx={{
           borderRadius: 2,
           backgroundColor: theme.palette.background.paper,
@@ -140,7 +138,6 @@ const AddMember: React.FC<setAlertProps> = ({
           </FormControl>
         </form>
       </Box>
-    </Container>
   );
 };
 
