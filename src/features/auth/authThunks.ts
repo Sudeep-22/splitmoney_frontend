@@ -4,7 +4,6 @@ import { fetchWithAuth } from "../fetchWithAuth";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-
 // 🔹 REGISTER
 export const registerThunk = createAsyncThunk(
   "auth/register",
@@ -37,7 +36,10 @@ export const registerThunk = createAsyncThunk(
 // 🔹 LOGIN
 export const loginThunk = createAsyncThunk(
   "auth/login",
-  async ({ email, password }: { email: string; password: string }, thunkAPI) => {
+  async (
+    { email, password }: { email: string; password: string },
+    thunkAPI
+  ) => {
     try {
       const res = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
@@ -63,6 +65,7 @@ export const refreshAccessTokenThunk = createAsyncThunk(
     try {
       const res = await fetch(`${apiUrl}/auth/refreshToken`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
 
@@ -110,12 +113,9 @@ export const deleteUserThunk = createAsyncThunk(
   "auth/deleteUser",
   async (_, thunkAPI) => {
     try {
-      const res = await fetchWithAuth(
-        `${apiUrl}/auth/deleteUser`,
-        {
-          method: "DELETE",
-        }
-      );
+      const res = await fetchWithAuth(`${apiUrl}/auth/deleteUser`, {
+        method: "DELETE",
+      });
 
       if (!res.ok) {
         const data = await res.json();
@@ -134,19 +134,17 @@ export const fetchAllUsersThunk = createAsyncThunk(
   "auth/fetchAllUsers",
   async (data: { groupId: string }, thunkAPI) => {
     try {
-      const res = await fetchWithAuth(
-        `${apiUrl}/auth/fetchAllUsers`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data), 
-        }
-      );
+      const res = await fetchWithAuth(`${apiUrl}/auth/fetchAllUsers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
       const responseData = await res.json();
-      if (!res.ok) throw new Error(responseData.message || "Failed to fetch users");
+      if (!res.ok)
+        throw new Error(responseData.message || "Failed to fetch users");
 
       return responseData.users;
     } catch (err: any) {
@@ -154,4 +152,3 @@ export const fetchAllUsersThunk = createAsyncThunk(
     }
   }
 );
-
