@@ -109,7 +109,7 @@ const AddMember: React.FC<setAlertProps> = ({
                 </MenuItem>
               ) : (
                 users.map((user) => (
-                  <MenuItem key={user._id} value={user._id}>
+                  <MenuItem key={user._id} value={user.name}>
                     {user.name}
                   </MenuItem>
                 ))

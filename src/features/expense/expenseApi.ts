@@ -1,4 +1,5 @@
 import { fetchWithAuth } from "../fetchWithAuth";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export interface Contribution {
   paidToUserId: string;
@@ -17,7 +18,7 @@ export interface AddExpensePayload {
 
 export const addExpense = async (data: AddExpensePayload) => {
   const res = await fetchWithAuth(
-    "http://localhost:5000/api/expense/addExpense",
+    `${apiUrl}/expense/addExpense`,
     {
       method: "POST",
       body: JSON.stringify(data),
@@ -33,7 +34,7 @@ export const addExpense = async (data: AddExpensePayload) => {
 
 export const fetchAllExpense = async (data: { groupId: string }) => {
   const res = await fetchWithAuth(
-    "http://localhost:5000/api/expense/fetchAllExpense",
+    `${apiUrl}/expense/fetchAllExpense`,
     {
       method: "POST",
       body: JSON.stringify(data),
@@ -46,7 +47,7 @@ export const fetchAllExpense = async (data: { groupId: string }) => {
 
 export const fetchMemberContri = async (data: { groupId: string }) => {
   const res = await fetchWithAuth(
-    "http://localhost:5000/api/expense/fetchMemberContri",
+    `${apiUrl}/expense/fetchMemberContri`,
     {
       method: "POST",
       body: JSON.stringify(data),
@@ -59,7 +60,7 @@ export const fetchMemberContri = async (data: { groupId: string }) => {
 
 export const fetchExpenseContri = async (data: { expenseId: string }) => {
   const res = await fetchWithAuth(
-    "http://localhost:5000/api/expense/fetchExpenseContri",
+    `${apiUrl}/expense/fetchExpenseContri`,
     {
       method: "POST",
       body: JSON.stringify(data),
@@ -72,7 +73,7 @@ export const fetchExpenseContri = async (data: { expenseId: string }) => {
 
 export const deleteExpense = async (data: { expenseId: string }) => {
   const res = await fetchWithAuth(
-    "http://localhost:5000/api/expense/deleteExpense",
+    `${apiUrl}/expense/deleteExpense`,
     {
       method: "POST",
       headers: {

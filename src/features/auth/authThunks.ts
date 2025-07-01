@@ -2,6 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { saveToken, clearToken, saveUser } from "./authUtils";
 import { fetchWithAuth } from "../fetchWithAuth";
 
+const apiUrl = import.meta.env.VITE_API_URL;
+
+
 // 🔹 REGISTER
 export const registerThunk = createAsyncThunk(
   "auth/register",
@@ -14,7 +17,7 @@ export const registerThunk = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${apiUrl}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -36,7 +39,7 @@ export const loginThunk = createAsyncThunk(
   "auth/login",
   async ({ email, password }: { email: string; password: string }, thunkAPI) => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
+      const res = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -58,7 +61,7 @@ export const refreshAccessTokenThunk = createAsyncThunk(
   "auth/refresh-Token",
   async (_, thunkAPI) => {
     try {
-      const res = await fetch("http://localhost:5000/api/auth/refreshToken", {
+      const res = await fetch(`${apiUrl}/auth/refreshToken`, {
         method: "POST",
         credentials: "include",
       });
@@ -91,7 +94,7 @@ export const logoutThunk = createAsyncThunk(
   "auth/logOut",
   async (_, thunkAPI) => {
     try {
-      await fetch("http://localhost:5000/api/auth/logOut", {
+      await fetch(`${apiUrl}/auth/logOut`, {
         method: "POST",
         credentials: "include",
       });
@@ -108,7 +111,7 @@ export const deleteUserThunk = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const res = await fetchWithAuth(
-        "http://localhost:5000/api/auth/deleteUser",
+        `${apiUrl}/auth/deleteUser`,
         {
           method: "DELETE",
         }
@@ -132,7 +135,7 @@ export const fetchAllUsersThunk = createAsyncThunk(
   async (data: { groupId: string }, thunkAPI) => {
     try {
       const res = await fetchWithAuth(
-        "http://localhost:5000/api/auth/fetchAllUsers",
+        `${apiUrl}/auth/fetchAllUsers`,
         {
           method: "POST",
           headers: {
