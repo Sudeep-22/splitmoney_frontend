@@ -78,6 +78,7 @@ const authSlice = createSlice({
         state.user = null;
         state.accessToken = null;
         state.message = "Logged out successfully";
+        state.users = [];
       })
       .addCase(logoutThunk.rejected, (state, action) => {
         state.error = action.payload as string;

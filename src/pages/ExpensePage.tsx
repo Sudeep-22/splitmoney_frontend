@@ -153,6 +153,7 @@ const ExpensePage = () => {
             }}
             color="error"
             variant="contained"
+            sx={{margin:2}}
           >
             Delete
           </Button>

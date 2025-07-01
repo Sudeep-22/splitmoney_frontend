@@ -39,7 +39,7 @@ const AddMember: React.FC<setAlertProps> = ({
   const [selectedName, setSelectedName] = useState("");
   const theme = useTheme();
   useEffect(() => {
-    dispatch(fetchAllUsersThunk());
+    dispatch(fetchAllUsersThunk({ groupId }));
   }, [dispatch]);
 
   const handleChange = (event: SelectChangeEvent) => {
@@ -48,6 +48,10 @@ const AddMember: React.FC<setAlertProps> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!selectedName) {
+      setAlert("warning", "Please select a user to add.");
+      return;
+    }
     dispatch(addMemberThunk({ name: selectedName, groupId }))
       .unwrap()
       .then(() => {
@@ -99,11 +103,17 @@ const AddMember: React.FC<setAlertProps> = ({
               onChange={handleChange}
               sx={{ marginBottom: 3 }}
             >
-              {users.map((user) => (
-                <MenuItem key={user._id} value={user.name}>
-                  {user.name}
+              {users.length === 0 ? (
+                <MenuItem disabled value="">
+                  No users available
                 </MenuItem>
-              ))}
+              ) : (
+                users.map((user) => (
+                  <MenuItem key={user._id} value={user._id}>
+                    {user.name}
+                  </MenuItem>
+                ))
+              )}
             </Select>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>

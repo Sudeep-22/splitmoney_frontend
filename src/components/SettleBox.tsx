@@ -101,7 +101,6 @@ const SettleBox: React.FC<setAlertProps> = ({
             onClick={handleClose}
             startIcon={<ArrowBackIcon />}
             sx={{
-              mb: 2,
               color: theme.palette.primary.main,
             }}
           >

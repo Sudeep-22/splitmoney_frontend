@@ -7,8 +7,6 @@ import {
   Button,
   Grid,
   Dialog,
-  DialogTitle,
-  DialogContent,
 } from "@mui/material";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import AddGroupBox from "../components/AddGroupBox";
@@ -40,7 +38,7 @@ const Groups: React.FC<setAlertProps> = ({ setAlert }) => {
   };
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="md">
       <Typography variant="h3" color="primary" sx={{ marginTop: 8 }}>
         Groups
       </Typography>
@@ -65,10 +63,7 @@ const Groups: React.FC<setAlertProps> = ({ setAlert }) => {
         Add Group
       </Button>
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>Create New Group</DialogTitle>
-        <DialogContent dividers>
           <AddGroupBox setAlert={setAlert} handleClose={handleClose} />
-        </DialogContent>
       </Dialog>
     </Container>
   );

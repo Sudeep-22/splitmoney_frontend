@@ -59,12 +59,12 @@ const AddGroupBox: React.FC<setAlertProps> = ({ setAlert, handleClose }) => {
   }, [auth.error]);
 
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="sm">
       <Box
         component={Paper}
         elevation={3}
         p={4}
-        mt={8}
+        m={4}
         sx={{
           borderRadius: 2,
           backgroundColor: theme.palette.background.paper,

@@ -165,18 +165,18 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
             />
           </Grid>
           <Grid size={{ xs: 8, sm: 7 }}>
-            <Typography variant="h6"> {user.name} </Typography>
+            <Typography variant="h6" sx={{paddingLeft:2}}> {user.name} </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <TextField
               label="Total Contribution"
+              fullWidth
               value={user.totalContri}
               onChange={(e) => handleChange(user._id, Number(e.target.value))}
               disabled={!user.isIncluded}
-              sx={{ m: 1, width: "25ch" }}
               helperText={
                 user.isIncluded
-                  ? `After tax addition: ₹${user.totalContri + splitTax}`
+                  ? `After tax : ₹${user.totalContri + splitTax}`
                   : ""
               }
               slotProps={{

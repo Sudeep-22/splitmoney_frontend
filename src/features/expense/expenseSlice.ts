@@ -129,6 +129,11 @@ const expenseSlice = createSlice({
     clearExpenseError: (state) => {
       state.error = null;
     },
+    resetExpenseState: (state) => {
+      state.memberContributions = [];
+      state.expenses = [];
+      state.expenseDetail = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -198,6 +203,6 @@ const expenseSlice = createSlice({
   },
 });
 
-export const { clearExpenseError } = expenseSlice.actions;
+export const { clearExpenseError, resetExpenseState } = expenseSlice.actions;
 
 export default expenseSlice.reducer;

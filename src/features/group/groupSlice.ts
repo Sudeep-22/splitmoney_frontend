@@ -106,6 +106,9 @@ const groupSlice = createSlice({
       state.message = null;
       state.error = null;
     },
+    resetGroupState: (state) => {
+      state.members = [];
+    },
   },
   extraReducers: (builder) => {
     const thunks = [createGroupThunk, addMemberThunk, exitGroupThunk];
@@ -156,5 +159,5 @@ const groupSlice = createSlice({
   },
 });
 
-export const { clearMessage } = groupSlice.actions;
+export const { clearMessage, resetGroupState } = groupSlice.actions;
 export default groupSlice.reducer;

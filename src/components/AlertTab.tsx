@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import Alert from "@mui/material/Alert";
 
 import React from "react";
@@ -14,9 +15,21 @@ interface AlertProps {
 const AlertTab: React.FC<AlertProps> = ({ alert }) => {
   if (!alert) return null;
   return (
-    <Alert variant="filled" severity={alert.type} onClose={() => {}}>
-      {alert.content}
-    </Alert>
+    <Box
+      sx={{
+        position: "fixed",
+        top: 70,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 1300,
+        width: "fit-content",
+        maxWidth: "90%",
+      }}
+    >
+      <Alert variant="filled" severity={alert.type}>
+        {alert.content}
+      </Alert>
+    </Box>
   );
 };
 

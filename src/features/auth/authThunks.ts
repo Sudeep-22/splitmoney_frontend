@@ -129,19 +129,26 @@ export const deleteUserThunk = createAsyncThunk(
 
 export const fetchAllUsersThunk = createAsyncThunk(
   "auth/fetchAllUsers",
-  async (_, thunkAPI) => {
+  async (data: { groupId: string }, thunkAPI) => {
     try {
       const res = await fetchWithAuth(
         "http://localhost:5000/api/auth/fetchAllUsers",
         {
-          method: "GET",
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data), 
         }
       );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to fetch users");
-      return data.users;
+
+      const responseData = await res.json();
+      if (!res.ok) throw new Error(responseData.message || "Failed to fetch users");
+
+      return responseData.users;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err.message);
     }
   }
 );
+

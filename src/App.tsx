@@ -96,7 +96,7 @@ function App() {
     chgAlertContent({ type, content: message });
     setTimeout(() => {
       chgAlertContent(null);
-    }, 2000);
+    }, 2500);
   };
 
   useEffect(() => {

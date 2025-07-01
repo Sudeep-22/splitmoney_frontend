@@ -14,10 +14,17 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../app/store";
-import { exitGroupThunk, fetchGroupThunk } from "../features/group/groupSlice";
+import {
+  exitGroupThunk,
+  fetchGroupThunk,
+  resetGroupState,
+} from "../features/group/groupSlice";
 import MemberSection from "../components/MemberSection";
 import ExpenseSection from "../components/ExpenseSection";
-import { fetchMemberContriThunk } from "../features/expense/expenseSlice";
+import {
+  fetchMemberContriThunk,
+  resetExpenseState,
+} from "../features/expense/expenseSlice";
 import SettleBox from "../components/SettleBox";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -59,6 +66,8 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
 
   useEffect(() => {
     if (id) {
+      dispatch(resetExpenseState());
+      dispatch(resetGroupState());
       dispatch(fetchMemberContriThunk({ groupId: id }));
     }
   }, [dispatch, id, refreshExpense]);
@@ -84,30 +93,19 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
   const handleBackClick = () => {
     navigate(-1);
   };
-
+  
   return (
     <Container maxWidth="lg">
-      <Box
-        sx={{
-          position: "relative",
-          textAlign: "center",
-          marginY: 2,
-        }}
-      >
-        <Button
-          onClick={handleBackClick}
-          startIcon={<ArrowBackIcon />}
-          sx={{
-            position: "absolute",
-            left: 0,
-            top: "50%",
-            transform: "translateY(-50%)",
-          }}
-        >
-          Back
-        </Button>
+      <Box sx={{ marginTop: 2, marginBottom: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+          <Button onClick={handleBackClick} startIcon={<ArrowBackIcon />}>
+            Back
+          </Button>
+        </Box>
 
-        <Typography variant="h4">{groupName}</Typography>
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Typography variant="h4">{groupName}</Typography>
+        </Box>
       </Box>
       <Box
         component={Paper}
