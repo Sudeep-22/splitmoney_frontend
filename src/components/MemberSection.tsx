@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import {
   Box,
   Button,
@@ -7,9 +8,9 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React from "react";
-import AddMember from "./AddMember";
-import MemberList from "./MemberList";
+
+const AddMember = React.lazy(() => import("./AddMember"));
+const MemberList = React.lazy(() => import("./MemberList"));
 
 interface MemberProps {
   id: string;
@@ -28,13 +29,10 @@ const MemberSection: React.FC<MemberProps> = ({
   triggerRefresh,
 }) => {
   const [openAddMember, setOpenAddMember] = React.useState(false);
-  const handleClose = () => {
-    setOpenAddMember(false);
-  };
-  const handleOpen = () => {
-    setOpenAddMember(true);
-  };
+  const handleClose = () => setOpenAddMember(false);
+  const handleOpen = () => setOpenAddMember(true);
   const theme = useTheme();
+
   return (
     <Box
       component={Paper}
@@ -54,26 +52,32 @@ const MemberSection: React.FC<MemberProps> = ({
         </Grid>
         <Grid size={4} sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button variant="contained" onClick={handleOpen}>
-            {" "}
             Add Members
           </Button>
         </Grid>
       </Grid>
-      <Dialog
-        open={openAddMember}
-        onClose={handleClose}
-        fullWidth
-        maxWidth="sm"
-      >
-        <AddMember
-          setAlert={setAlert}
-          handleClose={handleClose}
-          groupId={id!}
-          triggerRefresh={triggerRefresh}
-        />
-      </Dialog>
+
+      <Suspense fallback={<Typography p={2}>Loading Add Member...</Typography>}>
+        <Dialog
+          open={openAddMember}
+          onClose={handleClose}
+          fullWidth
+          maxWidth="sm"
+        >
+          <AddMember
+            setAlert={setAlert}
+            handleClose={handleClose}
+            groupId={id}
+            triggerRefresh={triggerRefresh}
+          />
+        </Dialog>
+      </Suspense>
+
       <hr />
-      <MemberList groupId={id!} refresh={refreshExpense} />
+
+      <Suspense fallback={<Typography p={2}>Loading Members...</Typography>}>
+        <MemberList groupId={id} refresh={refreshExpense} />
+      </Suspense>
     </Box>
   );
 };

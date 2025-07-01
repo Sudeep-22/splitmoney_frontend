@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import {
   Container,
   Box,
@@ -15,14 +15,16 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  CircularProgress,
   useTheme,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../app/store";
-import { clearMessage } from "../features/group/groupSlice";
-import { fetchMembersThunk } from "../features/group/groupSlice";
-import SplitExpense from "./SplitExpense";
-import IndivisualSplitExpense from "./IndivisualSplitExpense";
+import { clearMessage, fetchMembersThunk } from "../features/group/groupSlice";
+
+// ✅ Lazy-loaded components
+const SplitExpense = lazy(() => import("./SplitExpense"));
+const IndivisualSplitExpense = lazy(() => import("./IndivisualSplitExpense"));
 
 interface setAlertProps {
   setAlert: (
@@ -55,7 +57,7 @@ const AddExpense: React.FC<setAlertProps> = ({
 
   useEffect(() => {
     dispatch(fetchMembersThunk({ groupId }));
-  }, [dispatch]);
+  }, [dispatch, groupId]);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedName(event.target.value);
@@ -81,145 +83,147 @@ const AddExpense: React.FC<setAlertProps> = ({
   const theme = useTheme();
 
   return (
-    <>
-      <Container maxWidth={showDetails ? "md" : "sm"}>
-        <Box
-          component={Paper}
-          elevation={3}
-          p={4}
-          m={4}
-          sx={{
-            borderRadius: 2,
-            backgroundColor: theme.palette.background.paper, 
-            color: theme.palette.text.primary,
-          }}
-        >
-          <Typography variant="h5" align="center" sx={{ marginBottom: 4 }}>
-            Add Expense
-          </Typography>
+    <Container maxWidth={showDetails ? "md" : "sm"}>
+      <Box
+        component={Paper}
+        elevation={3}
+        p={4}
+        m={4}
+        sx={{
+          borderRadius: 2,
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+        }}
+      >
+        <Typography variant="h5" align="center" sx={{ marginBottom: 4 }}>
+          Add Expense
+        </Typography>
 
-          <TextField
-            required
-            fullWidth
-            value={expenseTitle}
-            onChange={(e) => setExpenseTitle(e.target.value)}
-            label="Expense Title"
-            variant="standard"
-            sx={{ marginBottom: 2 }}
-            error={errors.expenseTitle}
-            helperText={errors.expenseTitle ? "Expense title is required" : ""}
-          />
-          <TextField
-            required
-            fullWidth
-            value={totalExpense}
-            onChange={(e) => setTotalExpense(Number(e.target.value))}
-            label="Total Expense"
-            variant="standard"
-            error={errors.totalExpense}
-            helperText={
-              errors.totalExpense ? "Enter a valid positive amount" : ""
-            }
-          />
+        <TextField
+          required
+          fullWidth
+          value={expenseTitle}
+          onChange={(e) => setExpenseTitle(e.target.value)}
+          label="Expense Title"
+          variant="standard"
+          sx={{ marginBottom: 2 }}
+          error={errors.expenseTitle}
+          helperText={errors.expenseTitle ? "Expense title is required" : ""}
+        />
 
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="demo-simple-select-helper-label">
-              Paid by
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-helper-label"
-              id="demo-simple-select-helper"
-              value={selectedName}
-              label="Add User"
-              onChange={handleChange}
-              error={errors.selectedName}
-              sx={{ marginBottom: 1 }}
-            >
-              {members.map((member) => (
-                <MenuItem key={member._id} value={member._id}>
-                  {member.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Button
-                fullWidth
-                variant="contained"
-                type="submit"
-                color="primary"
-                sx={{ display: showDetails ? "none" : "flex" }}
-                onClick={() => {
-                  const hasTitleError = !expenseTitle.trim();
-                  const hasAmountError = totalExpense <= 0;
-                  const hasNameError = !selectedName;
+        <TextField
+          required
+          fullWidth
+          value={totalExpense}
+          onChange={(e) => setTotalExpense(Number(e.target.value))}
+          label="Total Expense"
+          variant="standard"
+          error={errors.totalExpense}
+          helperText={
+            errors.totalExpense ? "Enter a valid positive amount" : ""
+          }
+        />
 
-                  if (hasTitleError || hasAmountError || hasNameError) {
-                    setAlert("warning", "Please fill in all required fields.");
+        <FormControl fullWidth margin="normal">
+          <InputLabel id="paid-by-label">Paid by</InputLabel>
+          <Select
+            labelId="paid-by-label"
+            value={selectedName}
+            label="Paid by"
+            onChange={handleChange}
+            error={errors.selectedName}
+            sx={{ marginBottom: 1 }}
+          >
+            {members.map((member) => (
+              <MenuItem key={member._id} value={member._id}>
+                {member.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-                    setErrors({
-                      expenseTitle: hasTitleError,
-                      totalExpense: hasAmountError,
-                      selectedName: hasNameError,
-                    });
+        <Grid container spacing={2}>
+          <Grid size={{xs:12,sm:6}}>
+            <Button
+              fullWidth
+              variant="contained"
+              type="submit"
+              color="primary"
+              sx={{ display: showDetails ? "none" : "flex" }}
+              onClick={() => {
+                const hasTitleError = !expenseTitle.trim();
+                const hasAmountError = totalExpense <= 0;
+                const hasNameError = !selectedName;
 
-                    return;
-                  }
-
+                if (hasTitleError || hasAmountError || hasNameError) {
+                  setAlert("warning", "Please fill in all required fields.");
                   setErrors({
-                    expenseTitle: false,
-                    totalExpense: false,
-                    selectedName: false,
+                    expenseTitle: hasTitleError,
+                    totalExpense: hasAmountError,
+                    selectedName: hasNameError,
                   });
+                  return;
+                }
 
-                  setShowDetails(true);
-                }}
-              >
-                Add Expense
-              </Button>
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Button
-                fullWidth
-                sx={{ display: showDetails ? "none" : "flex" }}
-                variant="contained"
-                color="warning"
-                onClick={handleClose}
-              >
-                Cancel
-              </Button>
-            </Grid>
-          </Grid>
+                setErrors({
+                  expenseTitle: false,
+                  totalExpense: false,
+                  selectedName: false,
+                });
 
-          <FormControl>
-            <RadioGroup
-              row
-              aria-labelledby="split-type-radio"
-              name="split-type"
-              value={splitType}
-              onChange={(e) =>
-                setSplitType(e.target.value as "equal" | "individual")
-              }
+                setShowDetails(true);
+              }}
             >
-              <FormControlLabel
-                value="equal"
-                control={<Radio />}
-                label="Split Equally"
-              />
-              <FormControlLabel
-                value="individual"
-                control={<Radio />}
-                label="Individual Contribution"
-              />
-            </RadioGroup>
-          </FormControl>
+              Add Expense
+            </Button>
+          </Grid>
+          <Grid size={{xs:12,sm:6}}>
+            <Button
+              fullWidth
+              sx={{ display: showDetails ? "none" : "flex" }}
+              variant="contained"
+              color="warning"
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+          </Grid>
+        </Grid>
 
+        <FormControl>
+          <RadioGroup
+            row
+            name="split-type"
+            value={splitType}
+            onChange={(e) =>
+              setSplitType(e.target.value as "equal" | "individual")
+            }
+          >
+            <FormControlLabel
+              value="equal"
+              control={<Radio />}
+              label="Split Equally"
+            />
+            <FormControlLabel
+              value="individual"
+              control={<Radio />}
+              label="Individual Contribution"
+            />
+          </RadioGroup>
+        </FormControl>
+
+        <Suspense
+          fallback={
+            <Box mt={3} display="flex" justifyContent="center">
+              <CircularProgress />
+            </Box>
+          }
+        >
           {showDetails && splitType === "equal" && (
             <SplitExpense
               groupId={groupId}
               expenseTitle={expenseTitle}
-              totalExpense={totalExpense!}
+              totalExpense={totalExpense}
               paidByUserId={selectedName}
               handleClose={handleClose}
               triggerRefresh={triggerRefresh}
@@ -230,16 +234,16 @@ const AddExpense: React.FC<setAlertProps> = ({
             <IndivisualSplitExpense
               groupId={groupId}
               expenseTitle={expenseTitle}
-              totalExpense={totalExpense!}
+              totalExpense={totalExpense}
               paidByUserId={selectedName}
               handleClose={handleClose}
               triggerRefresh={triggerRefresh}
               resetForm={resetForm}
             />
           )}
-        </Box>
-      </Container>
-    </>
+        </Suspense>
+      </Box>
+    </Container>
   );
 };
 

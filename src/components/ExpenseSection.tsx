@@ -6,10 +6,12 @@ import {
   Typography,
   Dialog,
   useTheme,
+  CircularProgress,
 } from "@mui/material";
-import React from "react";
-import ExpenseList from "./ExpenseList";
-import AddExpense from "./AddExpense";
+import React, { Suspense, useState } from "react";
+
+const AddExpense = React.lazy(() => import("./AddExpense"));
+const ExpenseList = React.lazy(() => import("./ExpenseList"));
 
 interface ExpenseProps {
   id: string;
@@ -27,14 +29,12 @@ const ExpenseSection: React.FC<ExpenseProps> = ({
   triggerRefresh,
   refreshExpense,
 }) => {
-  const [openAddExpense, setOpenAddExpense] = React.useState(false);
-  const handleClose = () => {
-    setOpenAddExpense(false);
-  };
-  const handleOpen = () => {
-    setOpenAddExpense(true);
-  };
+  const [openAddExpense, setOpenAddExpense] = useState(false);
   const theme = useTheme();
+
+  const handleClose = () => setOpenAddExpense(false);
+  const handleOpen = () => setOpenAddExpense(true);
+
   return (
     <Box
       component={Paper}
@@ -50,7 +50,7 @@ const ExpenseSection: React.FC<ExpenseProps> = ({
     >
       <Grid container alignItems="center" sx={{ marginBottom: 2 }}>
         <Grid size={8}>
-          <Typography variant="h4"> Expenses </Typography>
+          <Typography variant="h4">Expenses</Typography>
         </Grid>
         <Grid size={4} sx={{ display: "flex", justifyContent: "flex-end" }}>
           <Button variant="contained" onClick={handleOpen}>
@@ -58,16 +58,23 @@ const ExpenseSection: React.FC<ExpenseProps> = ({
           </Button>
         </Grid>
       </Grid>
+
       <Dialog open={openAddExpense} onClose={handleClose} maxWidth={false}>
-        <AddExpense
-          setAlert={setAlert}
-          handleClose={handleClose}
-          groupId={id!}
-          triggerRefresh={triggerRefresh}
-        />
+        <Suspense fallback={<Box p={3}><CircularProgress /></Box>}>
+          <AddExpense
+            setAlert={setAlert}
+            handleClose={handleClose}
+            groupId={id}
+            triggerRefresh={triggerRefresh}
+          />
+        </Suspense>
       </Dialog>
+
       <hr />
-      <ExpenseList groupId={id!} refreshExpense={refreshExpense} />
+
+      <Suspense fallback={<Box textAlign="center" py={4}><CircularProgress /></Box>}>
+        <ExpenseList groupId={id} refreshExpense={refreshExpense} />
+      </Suspense>
     </Box>
   );
 };

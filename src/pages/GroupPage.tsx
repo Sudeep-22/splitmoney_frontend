@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, lazy, Suspense } from "react";
 import {
   Container,
   Box,
@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,14 +20,16 @@ import {
   fetchGroupThunk,
   resetGroupState,
 } from "../features/group/groupSlice";
-import MemberSection from "../components/MemberSection";
-import ExpenseSection from "../components/ExpenseSection";
 import {
   fetchMemberContriThunk,
   resetExpenseState,
 } from "../features/expense/expenseSlice";
-import SettleBox from "../components/SettleBox";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+// ✅ Lazy-loaded components
+const MemberSection = lazy(() => import("../components/MemberSection"));
+const ExpenseSection = lazy(() => import("../components/ExpenseSection"));
+const SettleBox = lazy(() => import("../components/SettleBox"));
 
 interface setAlertProps {
   setAlert: (
@@ -37,15 +40,11 @@ interface setAlertProps {
 
 const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
   const [refreshExpense, setRefreshExpense] = useState(false);
-  const [openSettleBox, setOpenSettleBox] = React.useState(false);
+  const [openSettleBox, setOpenSettleBox] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
 
-  const handleClose = () => {
-    setOpenSettleBox(false);
-  };
-  const handleOpen = () => {
-    setOpenSettleBox(true);
-  };
+  const handleClose = () => setOpenSettleBox(false);
+  const handleOpen = () => setOpenSettleBox(true);
 
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -90,10 +89,11 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
         setAlert("error", err);
       });
   };
+
   const handleBackClick = () => {
     navigate(-1);
   };
-  
+
   return (
     <Container maxWidth="lg">
       <Box sx={{ marginTop: 2, marginBottom: 2 }}>
@@ -102,11 +102,11 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
             Back
           </Button>
         </Box>
-
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Typography variant="h4">{groupName}</Typography>
         </Box>
       </Box>
+
       <Box
         component={Paper}
         elevation={3}
@@ -119,15 +119,15 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
         }}
       >
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{xs:12,sm:6}}>
             <Typography
               variant="h4"
               sx={{ textAlign: { xs: "center", sm: "right" } }}
             >
-              {totalAmount > 0 ? "You are owed: " : "You owe :"}
+              {totalAmount > 0 ? "You are owed: " : "You owe:"}
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{xs:12,sm:3}}>
             <Typography
               variant="h4"
               sx={{ textAlign: { xs: "center", sm: "left" } }}
@@ -138,7 +138,7 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
             </Typography>
           </Grid>
           <Grid
-            size={{ xs: 12, sm: 3 }}
+            size={{xs:12,sm:3}}
             sx={{ display: "flex", justifyContent: "space-around" }}
           >
             <Button
@@ -146,41 +146,51 @@ const GroupPage: React.FC<setAlertProps> = ({ setAlert }) => {
               variant="contained"
               onClick={handleOpen}
             >
-              {" "}
               Settle up!
             </Button>
             <Button variant="contained" onClick={() => setOpenConfirm(true)}>
-              {" "}
               Exit Group
             </Button>
           </Grid>
         </Grid>
+
         <Dialog
           open={openSettleBox}
           onClose={handleClose}
           fullWidth
           maxWidth="sm"
         >
-          <SettleBox
-            setAlert={setAlert}
-            handleClose={handleClose}
-            groupId={id!}
-            triggerRefresh={() => setRefreshExpense((prev) => !prev)}
-          />
+          <Suspense
+            fallback={
+              <Box p={4} display="flex" justifyContent="center">
+                <CircularProgress />
+              </Box>
+            }
+          >
+            <SettleBox
+              setAlert={setAlert}
+              handleClose={handleClose}
+              groupId={id!}
+              triggerRefresh={() => setRefreshExpense((prev) => !prev)}
+            />
+          </Suspense>
         </Dialog>
       </Box>
-      <MemberSection
-        id={id!}
-        setAlert={setAlert}
-        refreshExpense={refreshExpense}
-        triggerRefresh={() => setRefreshExpense((prev) => !prev)}
-      />
-      <ExpenseSection
-        id={id!}
-        setAlert={setAlert}
-        triggerRefresh={() => setRefreshExpense((prev) => !prev)}
-        refreshExpense={refreshExpense}
-      />
+
+      <Suspense fallback={<CircularProgress />}>
+        <MemberSection
+          id={id!}
+          setAlert={setAlert}
+          refreshExpense={refreshExpense}
+          triggerRefresh={() => setRefreshExpense((prev) => !prev)}
+        />
+        <ExpenseSection
+          id={id!}
+          setAlert={setAlert}
+          refreshExpense={refreshExpense}
+          triggerRefresh={() => setRefreshExpense((prev) => !prev)}
+        />
+      </Suspense>
 
       <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
         <DialogTitle>Confirm Group Exit</DialogTitle>

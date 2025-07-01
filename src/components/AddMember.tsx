@@ -40,7 +40,7 @@ const AddMember: React.FC<setAlertProps> = ({
   const theme = useTheme();
   useEffect(() => {
     dispatch(fetchAllUsersThunk({ groupId }));
-  }, [dispatch]);
+  }, [dispatch, groupId]);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedName(event.target.value);
