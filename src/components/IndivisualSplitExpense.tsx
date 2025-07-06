@@ -26,14 +26,14 @@ interface IndivisualExpenseSplitProps {
 interface User {
   _id: string;
   name: string;
-  totalContri: number;
+  totalContri: string;
   isIncluded: boolean;
 }
 
 const initializeUsers = (members: any[]): User[] => {
   return members.map((member) => ({
     ...member,
-    totalContri: 0,
+    totalContri: "",
     isIncluded: false,
   }));
 };
@@ -48,7 +48,7 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
   resetForm,
 }) => {
   const [users, setUsers] = useState<User[]>([]);
-  const [totalTax, setTotalTax] = useState<number>(0);
+  const [totalTax, setTotalTax] = useState<string>("");
   const [alertText, setAlertText] = useState<string>("");
   const dispatch = useDispatch<AppDispatch>();
   const { members } = useSelector((state: RootState) => state.group);
@@ -62,7 +62,7 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
     }
   }, [members, totalExpense]);
 
-  const handleChange = (userId: string, newAmount: number) => {
+  const handleChange = (userId: string, newAmount: string) => {
     setUsers((prev) =>
       prev.map((user) =>
         user._id === userId ? { ...user, totalContri: newAmount } : user
@@ -74,18 +74,26 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
     setUsers((prev) =>
       prev.map((user) =>
         user._id === userId
-          ? { ...user, isIncluded: checked, totalContri: 0 }
+          ? { ...user, isIncluded: checked, totalContri: "" }
           : user
       )
     );
   };
 
   const validateTotal = () => {
+
+    if (!paidByUserId || !totalExpense || !expenseTitle) {
+      setAlertText("Total expense, title or paid by not selected");
+      return;
+    }
+
+    let numTax = Number(totalTax);
+    
     const calculatedTotal = users
       .filter((u) => u.isIncluded)
-      .reduce((sum, u) => sum + u.totalContri, 0);
-    if (calculatedTotal + totalTax !== totalExpense) {
-      let difference = totalExpense - (calculatedTotal + totalTax);
+      .reduce((sum, u) => sum + Number(u.totalContri), 0);
+    if (calculatedTotal + numTax !== totalExpense) {
+      let difference = totalExpense - (calculatedTotal + numTax);
       if (difference > 0) {
         setAlertText("Sum of expenses is less by : ₹" + difference);
       } else {
@@ -93,24 +101,25 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
       }
       return;
     }
-    setAlertText("Sum matches the total expense!");
     handleSubmit();
   };
+
+
   const handleSubmit = () => {
-    if (!paidByUserId || !totalExpense || !expenseTitle) {
-      setAlertText("Total expense, title or paid by not selected");
-      return;
-    }
+    
+    let numTax = Number(totalTax);
+    
     const filteredUser = users.filter((u) => u.isIncluded);
     const splitTax =
-      totalTax > 0 && filteredUser.length > 0
-        ? Math.round(totalTax / filteredUser.length)
+      numTax > 0 && filteredUser.length > 0
+        ? Math.round(numTax / filteredUser.length)
         : 0;
+
     const contributions = users
       .filter((u) => u.isIncluded)
       .map((u) => ({
         paidToUserId: u._id,
-        amount: u.totalContri + splitTax,
+        amount: Number(u.totalContri) + splitTax,
       }));
 
     const payload = {
@@ -126,7 +135,6 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
     dispatch(addExpenseThunk(payload))
       .unwrap()
       .then(() => {
-        console.log("Expense added successfully");
         resetForm();
         triggerRefresh();
         handleClose();
@@ -135,20 +143,27 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
         console.error("Failed to add expense:", err);
       });
   };
+
   const includedUsers = users.filter((u) => u.isIncluded);
+  let numTax = Number(totalTax);
   const splitTax =
-    totalTax > 0 && includedUsers.length > 0
-      ? Math.round(totalTax / includedUsers.length)
+      numTax > 0 && includedUsers.length > 0
+      ? Math.round(numTax / includedUsers.length)
       : 0;
 
   return (
     <Box>
       <TextField
+        inputMode="numeric"
         label="Taxes"
         sx={{ marginTop: 2 }}
         required
         value={totalTax}
-        onChange={(e) => setTotalTax(Number(e.target.value))}
+        onChange={(e) => {
+          if(!isNaN(Number(e.target.value))){
+            setTotalTax(e.target.value);
+          }
+        }}
       />
       {users.map((user) => (
         <Grid
@@ -169,16 +184,19 @@ const IndivisualSplitExpense: React.FC<IndivisualExpenseSplitProps> = ({
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <TextField
+              inputMode="numeric"
               label="Total Contribution"
               fullWidth
               value={user.totalContri}
-              onChange={(e) => handleChange(user._id, Number(e.target.value))}
+              helperText={user.isIncluded
+                  ? `After tax : ₹${Number(user.totalContri) + splitTax}`
+                  : ""}
+              onChange={(e) => {
+                if(!isNaN(Number(e.target.value))){
+                  handleChange(user._id, e.target.value)
+                }
+              }}
               disabled={!user.isIncluded}
-              helperText={
-                user.isIncluded
-                  ? `After tax : ₹${user.totalContri + splitTax}`
-                  : ""
-              }
               slotProps={{
                 input: {
                   startAdornment: (

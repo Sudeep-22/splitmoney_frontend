@@ -59,7 +59,7 @@ const Groups: React.FC<setAlertProps> = ({ setAlert }) => {
       <Button
         variant="contained"
         color="primary"
-        sx={{ marginTop: 4 }}
+        sx={{ marginY: 4 }}
         startIcon={<AddBoxIcon />}
         onClick={handleOpen}
       >

@@ -181,7 +181,7 @@ const SignUp: React.FC<setAlertProps> = ({ setAlert }) => {
             </Grid>
             <Typography variant="body2" color="warning">Already have an account: Sign In below</Typography>
             <Grid size={12}>
-              <Button fullWidth variant="contained" type="submit" onClick={() => navigate("/login")}>
+              <Button fullWidth variant="contained" type="submit" disabled={auth.loading} onClick={() => navigate("/login")}>
                 Sign In
               </Button>
             </Grid>

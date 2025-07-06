@@ -142,7 +142,6 @@ const SplitExpense: React.FC<ExpenseSplitProps> = ({
     dispatch(addExpenseThunk(payload))
       .unwrap()
       .then(() => {
-        console.log("Expense added successfully");
         resetForm();
         triggerRefresh();
         handleClose();

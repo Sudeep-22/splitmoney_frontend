@@ -143,19 +143,31 @@ const Login: React.FC<setAlertProps> = ({ setAlert }) => {
               </Grid>
             )}
             <Grid size={12}>
-              <Button fullWidth variant="contained" type="submit">
-                Sign In
+              <Button
+                fullWidth
+                variant="contained"
+                type="submit"
+                disabled={auth.loading}
+              >
+                {auth.loading ? "Verifying..." : "Sign In"}
               </Button>
             </Grid>
 
-            <Typography variant="body2" color="warning">Dont have an account: Sign Up now</Typography>
+            <Typography variant="body2" color="warning">
+              Dont have an account: Sign Up now
+            </Typography>
 
             <Grid size={12}>
-              <Button fullWidth variant="contained" type="submit" onClick={() => navigate("/signUp")}>
+              <Button
+                fullWidth
+                variant="contained"
+                type="submit"
+                disabled={auth.loading}
+                onClick={() => navigate("/signUp")}
+              >
                 Sign Up
               </Button>
             </Grid>
-
           </Grid>
         </form>
       </Box>

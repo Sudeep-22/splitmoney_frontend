@@ -45,7 +45,8 @@ const AddExpense: React.FC<setAlertProps> = ({
   const [selectedName, setSelectedName] = useState("");
   const [showDetails, setShowDetails] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState("");
-  const [totalExpense, setTotalExpense] = useState<number>(0);
+  // const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [totalExpense, setTotalExpense] = useState("");
   const [splitType, setSplitType] = useState<"equal" | "individual">("equal");
   const [errors, setErrors] = useState({
     expenseTitle: false,
@@ -73,7 +74,7 @@ const AddExpense: React.FC<setAlertProps> = ({
 
   const resetForm = () => {
     setExpenseTitle("");
-    setTotalExpense(0);
+    setTotalExpense("");
     setSelectedName("");
     setShowDetails(false);
   };
@@ -111,15 +112,20 @@ const AddExpense: React.FC<setAlertProps> = ({
         />
 
         <TextField
+          inputMode="numeric"
           required
           fullWidth
           value={totalExpense}
-          onChange={(e) => setTotalExpense(Number(e.target.value))}
+          onChange={(e) => {
+            if(!isNaN(Number(e.target.value))){
+              setTotalExpense(e.target.value);
+            }}
+          }
           label="Total Expense"
           variant="standard"
           error={errors.totalExpense}
           helperText={
-            errors.totalExpense ? "Enter a valid positive amount" : ""
+            errors.totalExpense ? "Enter a valid amount" : ""
           }
         />
 
@@ -151,7 +157,7 @@ const AddExpense: React.FC<setAlertProps> = ({
               sx={{ display: showDetails ? "none" : "flex" }}
               onClick={() => {
                 const hasTitleError = !expenseTitle.trim();
-                const hasAmountError = totalExpense <= 0;
+                const hasAmountError = totalExpense.trim() === "" || Number(totalExpense) <= 0;
                 const hasNameError = !selectedName;
 
                 if (hasTitleError || hasAmountError || hasNameError) {
@@ -222,7 +228,7 @@ const AddExpense: React.FC<setAlertProps> = ({
             <SplitExpense
               groupId={groupId}
               expenseTitle={expenseTitle}
-              totalExpense={totalExpense}
+              totalExpense={Number(totalExpense)}
               paidByUserId={selectedName}
               handleClose={handleClose}
               triggerRefresh={triggerRefresh}
@@ -233,7 +239,7 @@ const AddExpense: React.FC<setAlertProps> = ({
             <IndivisualSplitExpense
               groupId={groupId}
               expenseTitle={expenseTitle}
-              totalExpense={totalExpense}
+              totalExpense={Number(totalExpense)}
               paidByUserId={selectedName}
               handleClose={handleClose}
               triggerRefresh={triggerRefresh}

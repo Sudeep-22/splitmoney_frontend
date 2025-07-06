@@ -72,7 +72,6 @@ const SettleBox: React.FC<setAlertProps> = ({
     dispatch(addExpenseThunk(payload))
       .unwrap()
       .then(() => {
-        console.log("Settled successfully");
         triggerRefresh();
         setAlert("success", "Amount settled successfully!");
         handleClose();
