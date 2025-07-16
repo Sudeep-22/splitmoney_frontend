@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getToken, clearToken } from "../features/auth/authUtils";
 import { refreshAccessTokenThunk } from "../features/auth/authThunks";
 import type { AppDispatch } from "../app/store";
@@ -14,9 +14,16 @@ const AuthInitializer = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const initialize = async () => {
+      const publicRoutes = ["/login", "/signUp"];
+      if (publicRoutes.includes(location.pathname)) {
+        onReady();
+        return;
+      }
+
       try {
         const token = getToken();
         if (!token) {
@@ -43,7 +50,7 @@ const AuthInitializer = ({
     };
 
     initialize();
-  }, [dispatch, navigate, suppressAlert]);
+  }, [dispatch, navigate, suppressAlert, location.pathname]);
 
   return null;
 };
