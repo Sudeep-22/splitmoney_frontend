@@ -1,7 +1,7 @@
 import "./App.css";
 import { useEffect, useMemo, useState } from "react";
 import Login from "./pages/Login";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import SignUp from "./pages/SignUp";
 import Appbar from "./components/Appbar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -15,12 +15,13 @@ import { refreshAccessTokenThunk } from "./features/auth/authThunks";
 import { Box, CircularProgress } from "@mui/material";
 import ExpensePage from "./pages/ExpensePage";
 import { CssBaseline } from "@mui/material";
-import { getToken } from "./features/auth/authUtils";
+import { clearToken, getToken } from "./features/auth/authUtils";
 
 function App() {
   const [mode, setMode] = useState<"light" | "dark">(
     () => (localStorage.getItem("appThemeMode") as "light" | "dark") || "dark"
   );
+  const navigate = useNavigate();
 
   const toggleMode = () => {
     setMode((prev) => {
@@ -100,7 +101,7 @@ function App() {
   };
 
   useEffect(() => {
-    const initialize = async () => {
+     const initialize = async () => {
       try {
         const token = getToken();
         if (!token) {
@@ -112,9 +113,20 @@ function App() {
 
         if (!refreshAccessTokenThunk.fulfilled.match(result)) {
           console.error("Token refresh failed");
+
+          // 🧼 Clear local storage
+          clearToken();
+
+          // 🔁 Redirect to login
+          navigate("/login");
+          return;
         }
       } catch (error) {
         console.error("Token refresh error:", error);
+
+        // Fallback
+        clearToken();
+        navigate("/login");
       } finally {
         setAppReady(true);
       }
