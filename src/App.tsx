@@ -1,7 +1,7 @@
 import "./App.css";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Login from "./pages/Login";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SignUp from "./pages/SignUp";
 import Appbar from "./components/Appbar";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -11,17 +11,15 @@ import AlertTab from "./components/AlertTab";
 import PrivateRoute from "./utils/PrivateRoute";
 import { useDispatch } from "react-redux";
 import type { AppDispatch } from "./app/store";
-import { refreshAccessTokenThunk } from "./features/auth/authThunks";
 import { Box, CircularProgress } from "@mui/material";
 import ExpensePage from "./pages/ExpensePage";
 import { CssBaseline } from "@mui/material";
-import { clearToken, getToken } from "./features/auth/authUtils";
+import AuthInitializer from "./components/AuthInitializer";
 
 function App() {
   const [mode, setMode] = useState<"light" | "dark">(
     () => (localStorage.getItem("appThemeMode") as "light" | "dark") || "dark"
   );
-  const navigate = useNavigate();
 
   const toggleMode = () => {
     setMode((prev) => {
@@ -82,7 +80,6 @@ function App() {
     [mode]
   );
 
-  const dispatch = useDispatch<AppDispatch>();
   const [isAppReady, setAppReady] = useState(false);
 
   const [alertContent, chgAlertContent] = useState<{
@@ -100,92 +97,57 @@ function App() {
     }, 2500);
   };
 
-  useEffect(() => {
-     const initialize = async () => {
-      try {
-        const token = getToken();
-        if (!token) {
-          setAppReady(true);
-          return;
-        }
-
-        const result = await dispatch(refreshAccessTokenThunk());
-
-        if (!refreshAccessTokenThunk.fulfilled.match(result)) {
-          console.error("Token refresh failed");
-
-          // 🧼 Clear local storage
-          clearToken();
-
-          // 🔁 Redirect to login
-          navigate("/login");
-          return;
-        }
-      } catch (error) {
-        console.error("Token refresh error:", error);
-
-        // Fallback
-        clearToken();
-        navigate("/login");
-      } finally {
-        setAppReady(true);
-      }
-    };
-
-    initialize();
-  }, [dispatch]);
-
-  if (!isAppReady) {
-    return (
-      <Box
-        display="flex"
-        height="100vh"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
-    <>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>
-          <Appbar mode={mode} toggleMode={toggleMode} setAlert={setAlert} />
-          <AlertTab alert={alertContent} />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <Groups setAlert={setAlert} />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/group/:id"
-              element={
-                <PrivateRoute>
-                  <GroupPage setAlert={setAlert} />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/expense/:id"
-              element={
-                <PrivateRoute>
-                  <ExpensePage />
-                </PrivateRoute>
-              }
-            />
-            <Route path="/signUp" element={<SignUp setAlert={setAlert} />} />
-            <Route path="/login" element={<Login setAlert={setAlert} />} />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <AuthInitializer onReady={() => setAppReady(true)} />
+        {!isAppReady ? (
+          <Box
+            display="flex"
+            height="100vh"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <>
+            <Appbar mode={mode} toggleMode={toggleMode} setAlert={setAlert} />
+            <AlertTab alert={alertContent} />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <Groups setAlert={setAlert} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/group/:id"
+                element={
+                  <PrivateRoute>
+                    <GroupPage setAlert={setAlert} />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/expense/:id"
+                element={
+                  <PrivateRoute>
+                    <ExpensePage />
+                  </PrivateRoute>
+                }
+              />
+              <Route path="/signUp" element={<SignUp setAlert={setAlert} />} />
+              <Route path="/login" element={<Login setAlert={setAlert} />} />
+            </Routes>
+          </>
+        )}
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
