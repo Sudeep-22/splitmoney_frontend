@@ -9,8 +9,6 @@ import Groups from "./pages/Groups";
 import GroupPage from "./pages/GroupPage";
 import AlertTab from "./components/AlertTab";
 import PrivateRoute from "./utils/PrivateRoute";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "./app/store";
 import { Box, CircularProgress } from "@mui/material";
 import ExpensePage from "./pages/ExpensePage";
 import { CssBaseline } from "@mui/material";
