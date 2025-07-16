@@ -49,10 +49,15 @@ const AvatarWithOptions: React.FC<setAlertProps> = ({ setAlert }) => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    dispatch(logoutThunk());
+  const handleLogout = async() => {
+    const result = await dispatch(logoutThunk());
+
+  if (logoutThunk.fulfilled.match(result)) {
     setAlert("success", "Logged out Successfully!");
     Navigate("/login");
+  } else {
+    setAlert("error", "Logout Failed");
+  }
   };
   const handleDeleteUser = () => {
     dispatch(deleteUserThunk());

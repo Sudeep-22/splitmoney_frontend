@@ -5,7 +5,13 @@ import { getToken, clearToken } from "../features/auth/authUtils";
 import { refreshAccessTokenThunk } from "../features/auth/authThunks";
 import type { AppDispatch } from "../app/store";
 
-const AuthInitializer = ({ onReady }: { onReady: () => void }) => {
+const AuthInitializer = ({
+  onReady,
+  suppressAlert = true,
+}: {
+  onReady: () => void;
+  suppressAlert?: boolean;
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
@@ -26,7 +32,9 @@ const AuthInitializer = ({ onReady }: { onReady: () => void }) => {
           navigate("/login");
         }
       } catch (err) {
-        console.error("Refresh error:", err);
+        if (!suppressAlert) {
+          console.error("Refresh error:", err);
+        }
         clearToken();
         navigate("/login");
       } finally {
@@ -35,7 +43,7 @@ const AuthInitializer = ({ onReady }: { onReady: () => void }) => {
     };
 
     initialize();
-  }, [dispatch, navigate]);
+  }, [dispatch, navigate, suppressAlert]);
 
   return null;
 };

@@ -55,7 +55,7 @@ const Login: React.FC<setAlertProps> = ({ setAlert }) => {
   };
 
   useEffect(() => {
-    if (auth.accessToken) {
+    if (auth.accessToken && hasSubmitted) {
       setAlert("success", "Login Successful");
       navigate("/");
     }
